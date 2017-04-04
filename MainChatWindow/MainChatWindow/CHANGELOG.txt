@@ -1,0 +1,6 @@
+﻿IN WORK VERSION 0.3.0
+-added gridsplitter between mainchat object and list of chatroom people, expenader menu for font change and other rich format text things;changed chat textbox to flow documents - will need testing and improvement
+VERSION 0.2.0
+-added menubar, statusbar, context menus for main objects
+VERSION 0.1.0
+-added layout of main chat window
