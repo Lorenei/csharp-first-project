@@ -1,5 +1,11 @@
-﻿IN WORK VERSION 0.3.0
--added gridsplitter between mainchat object and list of chatroom people, expenader menu for font change and other rich format text things;changed chat textbox to flow documents - will need testing and improvement
+﻿TODO VERSION 0.5.0
+-add method for sending message (probably into space right now) when enter is pressed in textbox
+-add logging api to write any received message into html log.
+VERSION 0.4.0
+-added some comments
+-improved flow document object, added listbox for list of users currently connected to chat with possible icons and different colors, context menu for list, 
+VERSION 0.3.0
+-added gridsplitter between mainchat object and list of chatroom people, expender menu for font change and other rich format text things;changed chat textbox to flow documents - will need testing and improvement
 VERSION 0.2.0
 -added menubar, statusbar, context menus for main objects
 VERSION 0.1.0
