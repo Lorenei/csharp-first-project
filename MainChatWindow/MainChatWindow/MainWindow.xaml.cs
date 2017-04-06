@@ -24,8 +24,13 @@ namespace MainChatWindow {
         private Paragraph tempParagraph;
         private Span _time_span_;
         private Span _message_span_;
+        private ChatLogAPI chatLog;
         public MainWindow() {
             InitializeComponent();
+            chatLog = new ChatLogAPI();
+            if(!chatLog.CreateNewChatLog("pub_szych")) {
+                Application.Current.Shutdown();
+            }
             //tempParagraph = new Paragraph();
         }
 
@@ -52,6 +57,10 @@ namespace MainChatWindow {
             tempParagraph = layoutMessage("Lily", message);
             tempParagraph.Loaded += loadedBlock;
             OknoChatowe.Document.Blocks.Add(tempParagraph);
+
+            if(!chatLog.WriteToChatLog("pub_szych", tempParagraph.ToString())) {
+                Application.Current.Shutdown();
+            }
             
             //tempParagraph.BringIntoView();
         }
