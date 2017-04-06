@@ -1,6 +1,8 @@
-﻿TODO VERSION 0.5.0
--add method for sending message (probably into space right now) when enter is pressed in textbox
+﻿TODO VERSION 0.6.0
 -add logging api to write any received message into html log.
+VERSION 0.5.0
+-added method for sending message written by user in textbox,for now it's interpreted right into the chat window, after some formatting is made and currrent time is added
+-added few resource properties into window xaml for use with messages in chat window formatting
 VERSION 0.4.0
 -added some comments
 -improved flow document object, added listbox for list of users currently connected to chat with possible icons and different colors, context menu for list, 

@@ -21,21 +21,17 @@ namespace MainChatWindow {
     
     public partial class MainWindow : Window {
 
-        Paragraph tempParagraph;
+        private Paragraph tempParagraph;
+        private Span _time_span_;
+        private Span _message_span_;
         public MainWindow() {
             InitializeComponent();
             //tempParagraph = new Paragraph();
         }
 
+        //Event on key down added to textbox where user can type message to be sent to chat room
         private void UserMessageTextBox_OnKeyDownHandler(object sender, KeyEventArgs e) {
             if(e.Key == Key.Return) {
-                //< Paragraph FontFamily = "Segoe UI Emoji" FontSize = "13" >
-                //< Span Foreground = "Gray" >[15:15:15] </ Span >
-                //< Bold > Lorenei:</ Bold >
-                //< Italic > No coś tam 😖 napiszemy żeby było widać że to chat no nie ?
-                //</ Italic >
-                //< Image Source = "emots/1f609.png" Width = "16" ></ Image >
-                //</ Paragraph >
                 string tempString = UserMessageTextBox.Text;
                 if(tempString != null && tempString != "")
                 {
@@ -45,6 +41,7 @@ namespace MainChatWindow {
             }
         }
 
+        //should be activated by server response about whether message was accepted or not
         private void AddMessageToFlowDocument(string message)
         {
             if(message == "" || message == null)
@@ -52,13 +49,13 @@ namespace MainChatWindow {
                 return;
             }
 
-            tempParagraph = new Paragraph(new Run(message));
+            tempParagraph = layoutMessage("Lily", message);
             tempParagraph.Loaded += loadedBlock;
             OknoChatowe.Document.Blocks.Add(tempParagraph);
             
             //tempParagraph.BringIntoView();
         }
-
+        //method added to event to scroll main chat window to last added message
         private void loadedBlock(object sender, RoutedEventArgs e)
         {
             var bloc = sender as Block;
@@ -66,6 +63,25 @@ namespace MainChatWindow {
             {
                 bloc.BringIntoView();
             }
+        }
+
+        //method to layout message before adding it to the main chat window
+        private Paragraph layoutMessage(string _nick, string _message)
+        {
+            Paragraph tempP = new Paragraph();
+            var _datetime_ = DateTime.Now;
+            //_time_span_ = new Span(new Run("[" + _datetime_.Hour + ":" + _datetime_.Minute + ":" + _datetime_.Second + "] "));
+            _time_span_ = new Span(new Run("[" + _datetime_.ToString("hh:mm:ss") + "] "));
+            _time_span_.Style = (Style)(this.Resources["_TIME_SPAN_"]);
+            tempP.Inlines.Add(_time_span_);
+
+            tempP.Inlines.Add(new Bold(new Run(_nick + ": ")));
+
+            _message_span_ = new Span(new Run(_message));
+            _message_span_.Style = (Style)(this.Resources["_ITALIC_SPAN_"]);
+            tempP.Inlines.Add(_message_span_);
+
+            return tempP;
         }
     }
 }

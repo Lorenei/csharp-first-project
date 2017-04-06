@@ -6,6 +6,25 @@
         xmlns:local="clr-namespace:MainChatWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="600">
+    <Window.Resources>
+        <!-- 
+            Definitions of style that will be used for added messages
+            This is temporary
+        -->
+        <Style TargetType="FlowDocument">
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style TargetType="Paragraph">
+            <Setter Property="Margin" Value="0,5,0,0" />
+        </Style>
+        <Style x:Key="_TIME_SPAN_" TargetType="Span">
+            <Setter Property="Foreground" Value="Gray" />
+        </Style>
+        <Style x:Key="_ITALIC_SPAN_" TargetType="Span">
+            <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="Foreground" Value="Red" />
+        </Style>
+    </Window.Resources>
 
     <Grid>
         <!-- Definitions of rows and columns in main gridpanel -->
