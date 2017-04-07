@@ -13,5 +13,8 @@ namespace MainChatWindow
     /// </summary>
     public partial class App : Application
     {
+        private void AppExit(object sender, ExitEventArgs e) {
+            MessageBox.Show("wywołano app exit z app.cs");
+        }
     }
 }

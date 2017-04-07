@@ -1,5 +1,8 @@
-﻿TODO VERSION 0.6.0
--add logging api to write any received message into html log.
+﻿TODO VERSION 0.7.0
+-add possibility to choose and set color, style etc for fonts  from extender menu
+-add style settings from above to HTML log
+VERSION 0.6.0
+-added logging api to write any received message into html log.
 VERSION 0.5.0
 -added method for sending message written by user in textbox,for now it's interpreted right into the chat window, after some formatting is made and currrent time is added
 -added few resource properties into window xaml for use with messages in chat window formatting

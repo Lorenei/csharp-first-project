@@ -25,13 +25,17 @@ namespace MainChatWindow {
         private Span _time_span_;
         private Span _message_span_;
         private ChatLogAPI chatLog;
+
+        //DEBUG VARIABLES
+        private string _ROOM_NAME_;
+        private string _NICK_;
         public MainWindow() {
             InitializeComponent();
+            _ROOM_NAME_ = "pub_szych";
+            _NICK_ = "Lily";
+            //create new log file for current chat room
             chatLog = new ChatLogAPI();
-            if(!chatLog.CreateNewChatLog("pub_szych")) {
-                Application.Current.Shutdown();
-            }
-            //tempParagraph = new Paragraph();
+            GenerateLogFile();
         }
 
         //Event on key down added to textbox where user can type message to be sent to chat room
@@ -53,14 +57,14 @@ namespace MainChatWindow {
             {
                 return;
             }
-
-            tempParagraph = layoutMessage("Lily", message);
+            //string that will be outed by layoutmessage method so we can write stylised with html message to our log file
+            string _message_to_log;
+            tempParagraph = layoutMessage(_NICK_, message, out _message_to_log);
             tempParagraph.Loaded += loadedBlock;
             OknoChatowe.Document.Blocks.Add(tempParagraph);
 
-            if(!chatLog.WriteToChatLog("pub_szych", tempParagraph.ToString())) {
-                Application.Current.Shutdown();
-            }
+            //write our message to our log file
+            SaveToLog(_ROOM_NAME_, _message_to_log);
             
             //tempParagraph.BringIntoView();
         }
@@ -75,12 +79,13 @@ namespace MainChatWindow {
         }
 
         //method to layout message before adding it to the main chat window
-        private Paragraph layoutMessage(string _nick, string _message)
+        //_message_ is a string that goes out of this method and returns constructed, stylised (in future :P) html message that will be written in log file.
+        private Paragraph layoutMessage(string _nick, string _message, out string _message_)
         {
             Paragraph tempP = new Paragraph();
             var _datetime_ = DateTime.Now;
-            //_time_span_ = new Span(new Run("[" + _datetime_.Hour + ":" + _datetime_.Minute + ":" + _datetime_.Second + "] "));
-            _time_span_ = new Span(new Run("[" + _datetime_.ToString("hh:mm:ss") + "] "));
+
+            _time_span_ = new Span(new Run("[" + _datetime_.ToString("HH:mm:ss") + "] "));
             _time_span_.Style = (Style)(this.Resources["_TIME_SPAN_"]);
             tempP.Inlines.Add(_time_span_);
 
@@ -90,7 +95,28 @@ namespace MainChatWindow {
             _message_span_.Style = (Style)(this.Resources["_ITALIC_SPAN_"]);
             tempP.Inlines.Add(_message_span_);
 
+            _message_ = layoutForLogMessage(_datetime_.ToString("HH:mm:ss"), _nick, _message);
+
             return tempP;
         }
+
+        private String layoutForLogMessage(string time, string nick, string msg) {
+            string layoutedMessage = "[" + time + "] " + nick + ": " + msg + "<br />" + Environment.NewLine;
+
+            return layoutedMessage;
+        }
+
+        private void GenerateLogFile() {
+            if (!chatLog.CreateNewChatLog(_ROOM_NAME_)) {
+                Application.Current.Shutdown();
+            }
+        }
+
+        private void SaveToLog(string roomName, string _message_to_log) {
+            if (!chatLog.WriteToChatLog(roomName, _message_to_log)) {
+                Application.Current.Shutdown();
+            }
+        }
+
     }
 }
