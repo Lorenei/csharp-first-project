@@ -36,6 +36,7 @@ namespace MainChatWindow {
             //create new log file for current chat room
             chatLog = new ChatLogAPI();
             GenerateLogFile();
+            
         }
 
         //Event on key down added to textbox where user can type message to be sent to chat room

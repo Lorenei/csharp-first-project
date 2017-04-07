@@ -24,6 +24,15 @@
             <Setter Property="FontStyle" Value="Italic" />
             <Setter Property="Foreground" Value="Red" />
         </Style>
+        <Style x:Key="_ITALIC_">
+            <Setter Property="Control.FontStyle" Value="Italic" />
+        </Style>
+        <Style x:Key="_BOLD_">
+            <Setter Property="Control.FontWeight" Value="Bold" />
+        </Style>
+        <Style x:Key="_UNDERLINE_">
+            <Setter Property="Control.TextDecorations" Value="Underline" />
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -162,9 +171,10 @@
             -->
             <Expander Margin="0,0,5,0" ExpandDirection="Right" Grid.Column="0">
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal">
-                    <Button>B</Button>
-                    <Button>I</Button>
-                    <Button>A</Button>
+                    <ToggleButton Name="FontColorButton" Width="20">A</ToggleButton>
+                    <ToggleButton Name="BoldButton" Width="20" Style="{StaticResource _BOLD_}">B</ToggleButton>
+                    <ToggleButton Name="ItalicButton" Width="20" Style="{StaticResource _ITALIC_}">I</ToggleButton>
+                    <ToggleButton Name="UnderlineButton" Width="20" Style="{StaticResource _UNDERLINE_}">U</ToggleButton>
                 </StackPanel>
             </Expander>
             
