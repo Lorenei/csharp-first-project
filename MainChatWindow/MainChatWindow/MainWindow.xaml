@@ -30,9 +30,9 @@
         <Style x:Key="_BOLD_">
             <Setter Property="Control.FontWeight" Value="Bold" />
         </Style>
-        <Style x:Key="_UNDERLINE_">
-            <Setter Property="Control.TextDecorations" Value="Underline" />
-        </Style>
+        <!--<Style x:Key="_UNDERLINE_">
+            <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+        </Style>-->
     </Window.Resources>
 
     <Grid>
@@ -174,7 +174,7 @@
                     <ToggleButton Name="FontColorButton" Width="20">A</ToggleButton>
                     <ToggleButton Name="BoldButton" Width="20" Style="{StaticResource _BOLD_}">B</ToggleButton>
                     <ToggleButton Name="ItalicButton" Width="20" Style="{StaticResource _ITALIC_}">I</ToggleButton>
-                    <ToggleButton Name="UnderlineButton" Width="20" Style="{StaticResource _UNDERLINE_}">U</ToggleButton>
+                    <!--<ToggleButton Name="UnderlineButton" Width="20" Style="{StaticResource _UNDERLINE_}">U</ToggleButton>-->
                 </StackPanel>
             </Expander>
             

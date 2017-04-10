@@ -1,6 +1,15 @@
-﻿TODO VERSION 0.7.0
--add possibility to choose and set color, style etc for fonts  from extender menu
--add style settings from above to HTML log
+﻿#############################################
+SERVER APPLICATION
+------------------
+TODO SERVER VERSION 0.1.0
+-basic console server
+-listening to sockets
+#############################################
+CLIENT APPLICATION
+------------------
+TODO VERSION 0.7.0
+-(feature moved to a later date - probably after basic server communication is possible) add possibility to choose and set color, style etc for fonts  from extender menu
+-(feature moved to a later date - probably after basic server communication is possible) add style settings from above to HTML log
 VERSION 0.6.0
 -added logging api to write any received message into html log.
 VERSION 0.5.0
