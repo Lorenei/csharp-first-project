@@ -1,0 +1,17 @@
+# INITIAL DESCRITPION #
+# Contains info about planned features for C# Academy project, planned to be used technologies etc. #
+# CAN'T CHANGE THIS FILE AFTER 15TH MAY which is deadline for submitting plans for project #
+# AUTHOR: ARKADIUSZ RICHERT #
+# E-MAIL: ARSHENIK@GMAIL.COM #
+
+DESCRIPTION:
+Basic chat client desktop application. Inspired by polchat.pl which was shut down years ago.
+Features described below.
+- login panel
+- writing and sending messages to public chat room
+- logging chat talk to file
+- list of users connected to current room
+- control buttons for room admins (kick, show ip info, ban)
+- menubar and status bar with some basic things
+
+GUI will be made in WPF, server in WCF.

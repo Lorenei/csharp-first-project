@@ -1,0 +1,87 @@
+#INITIAL DESCRITPION#
+#Contains info about planned features for C# Academy project, planned to be used technologies etc.#
+#CAN'T CHANGE THIS FILE AFTER 15TH MAY which is deadline for submitting plans for project#
+#AUTHOR: ARKADIUSZ RICHERT#
+#E-MAIL: ARSHENIK@GMAIL.COM#
+
+DESCRIPTION:
+Basic chat client desktop application.
+Features described below.
+For describing to be used technologies/way to implement it I'm using two or three paragraphs where:
+a "Minimum must to do" means a basic way I'm planning to implement this feature,
+"Medium want to do" means I want to achieve this implementation but I'm not sure I'll be able to,
+and "a "Maximum would love to do" means a better way, that I would like to use to implement this feature,
+but may not be able to do so in time for C# Academy project submit.
+Let's say, that "B)" paragraph is kind of promise to myself, to work hard enough to try it :)
+
+FEATURES:
+1. Login as existing user or as a guest.
+	A) Minimum must to do -> Use textfile provided with client for users database.
+	B) Maximum "would love to do" -> Use external MySQL database or something other for users database. 
+		Doesn't really matter what, but it has to be external. Even textfile but on servers location will do.
+		Of course, MySQL or similar would be best, as it would allow for more multiplatform + website :)
+2. Client GUI in WPF
+3. Writing messages.
+	A) Minimum must to do -> When user hits ENTER key, sends message to main chat window with time stamp 
+		and user name stylized. Sole message is without stylizing.
+		OFFLINE MODE without server connection, that is.. writing to yourself ;)
+	B) Medium want to do -> same as A) except that it will be using ONLINE MODE with server connection,
+		so messages wont be sent to main chat window, but to server, and waiting for "Accepted message" callback
+		(this probably will always be true, since I'm not planning to implement floods,spams etc for now) but
+		it will fix problems that could show up without it -> everyone gets different timestamp of message,
+		user could think everyone got his message, but noone did, so overall conversation is broken. 
+		With server accept callback function, this could be prevented as server will be the one deciding timestamps
+		for messages.
+	C) Maximum "Would love to do" -> Everything above + stylizing messages. Don't know of implementation yet, that's
+		why I decided to leave it as "if I have time and brains to do it". It needs functional server and client
+		in my opinion so I would be able to decide on how to deal with that. Stylizing messages as to allow user
+		to choose whether their message should be BOLD/ITALIC/UNDERSCORE and what color.
+4. Chat Log to file
+	A) Minimum must to do -> logs conversation to HTML file, with name set as CHAT_ROOM and date-time stamp of conversation
+		start time.
+	B) Maximum "would love to do" -> same as above but with addition of stylized messages, names, timestamps and 
+		emojis/images so when you open up HTML file it will look exactly colorful like original conversation
+5. List of users connected to chat room
+	A) Minimum must to do -> plain list of connected users names. If no ONLINE MODE is made (see point 3.A)
+		then list contains only name of single user. If ONLINE MODE is made then it will ask server for a list.
+		I would like to implement it as a server callback function, which will send new list to all users, each time
+		it changes (new user joins, or someone leaves the room). Clients should respond to server callback,
+		changing the list either from data received from server together with a first callback, or if server callback
+		is just plain "info" about list changing, contact server and ask it for new list or just list of changes.
+	B) Maximum "would love to do" -> same as above + stylized users names : color, and BOLD if user is engaged in
+		private talk, but that may be a settable functionality either on server, or client.
+6. Kick button
+	A) Minimum must to do -> shows up when current user has admin privileges. Kicks currently selected user on list from chat room.
+7. Ban button
+	A) Minimum must to do -> shows up when current user had admin privileges. Bans currently selected user on list from chat room.
+8. Show IP button
+	A) Minimum must to do -> shows up when current user had admin privileges. Shows IP of currently selected user on list.
+9. Private message
+	A) Minimum must to do -> Plain button, which could be used for agression clicking. This feature is not set to MUST DO.
+	B) Medium want to do -> Starts a private conversation (different window or tab) with currently selected user on the list.
+		May result in setting your own name on the list to BOLD if point 5.B is made.
+		Private chat will be logged to HTML file with users name (the one we are speaking with) and date-time stamp
+	C) Maximum "would love to do" -> above + stylized messages : font color, bold, italic, underscore.
+10. Change color button
+	A) Minimum must to do -> Another button for aggresive users. Since point 5.B is not a minimum.
+	B) Maximum "would love to do" -> Change color of currently selected users name on the list.
+11. Status bar
+	A) Minimum must to do -> Show server time, chat room name, latency maybe? Still undefined what should be shown there.
+	B) Maximum "would love to do" -> improve above ideas even more! (that is if there will be any)
+12. Menu bar
+	A) Minimum must to do -> menus with commands linked to them (wpf style). Standard planned menus, File(Exit), Help(About)
+		This point may contain more menus/commands as I get to that point in code.
+	B) Maximum "would love to do" -> improve it even more, improve improve, everything can be improved. More menus, more options,
+		more posibilities.
+13. Server
+	A) Minimum must to do -> Server isn't included in "must to do", so it may never work out to see the daylight.
+	B) Medium want to do -> 
+		Console application without GUI. Operated by entering some basic commands.
+		Worked out by using WCF. Opens up and waits for connection.
+		Basic functions:
+			- login service - checks credentials from joined user and compares them to the ones exiting in database(file or MySQL or else)
+			- kick - kicks selected user, could be used by both "kick button" which users with admin privileges can use, and server itself
+				so it could be able to kick users, due to wrong credentials, or something else that may apply to that
+			- ban - kicks and prevents entry of banned user
+			- ip - shows ip of choosen user
+			- message - receives messages from clients, verifies(or not) them, time stamps them and sends to all users 
