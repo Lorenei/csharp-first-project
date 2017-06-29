@@ -12,14 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ServiceModel;
+using ChatInterfaces;
 
-namespace MainChatWindow {
+namespace ChatClient {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
     
     public partial class MainWindow : Window {
+
+        //Service vars
+        public static IChatService Server;
+        private static DuplexChannelFactory<IChatService> _channelFactory;
 
         private Paragraph tempParagraph;
         private Span _time_span_;
@@ -31,6 +37,11 @@ namespace MainChatWindow {
         private string _NICK_;
         public MainWindow() {
             InitializeComponent();
+
+            //Service initialization
+            _channelFactory = new DuplexChannelFactory<IChatService>(new ClientCallback(), "ChatServiceEndPoint");
+            Server = _channelFactory.CreateChannel();
+
             _ROOM_NAME_ = "pub_szych";
             _NICK_ = "Lily";
             //create new log file for current chat room
