@@ -63,7 +63,7 @@ namespace ChatClient {
         }
 
         //should be activated by server response about whether message was accepted or not
-        private void AddMessageToFlowDocument(string message)
+        public void AddMessageToFlowDocument(string message, string userName = "")
         {
             if(message == "" || message == null)
             {
@@ -71,7 +71,7 @@ namespace ChatClient {
             }
             //string that will be outed by layoutmessage method so we can write stylised with html message to our log file
             string _message_to_log;
-            tempParagraph = layoutMessage(_NICK_, message, out _message_to_log);
+            tempParagraph = layoutMessage(userName, message, out _message_to_log);
             tempParagraph.Loaded += loadedBlock;
             OknoChatowe.Document.Blocks.Add(tempParagraph);
 
