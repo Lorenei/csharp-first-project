@@ -10,5 +10,9 @@ namespace ChatInterfaces {
     [ServiceContract(CallbackContract = typeof(IClient))]
     public interface IChatService {
 
+        [OperationContract]
+        int Login(string userName);
+        [OperationContract]
+        void SendMessageToAll(string message, string userName);
     }
 }

@@ -8,6 +8,6 @@ using System.ServiceModel;
 namespace ChatInterfaces {
     public interface IClient {
         [OperationContract]
-        void PlaceHolder();
+        void GetMessage(string message, string userName);
     }
 }
