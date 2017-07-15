@@ -11,7 +11,7 @@ namespace ChatInterfaces {
     public interface IChatService {
 
         [OperationContract]
-        int Login(string userName);
+        int Login(string userName, string userPassword, string userRoomName);
         [OperationContract]
         void SendMessageToAll(string message, string userName);
     }

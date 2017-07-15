@@ -23,6 +23,7 @@ namespace ChatClient {
         //Service vars
         public static IChatService Server;
         private static DuplexChannelFactory<IChatService> _channelFactory;
+        private static ClientCallback _clientCallback;
 
         private Paragraph tempParagraph;
         private Span _time_span_;
@@ -35,42 +36,68 @@ namespace ChatClient {
 
         public bool _IS_CONNECTION_DONE_ = false;
 
-        public ChatWindow(string login, string password, string room) {
-            InitializeComponent();
+        public ChatWindow() {
+            InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
 
-            _LOGIN_ = login;
-            _PASSWORD_ = password;
-            _ROOM_NAME_ = room;
+            //_LOGIN_ = login;
+            //_PASSWORD_ = password;
+            //_ROOM_NAME_ = room;
 
             //Service initialization
-            _channelFactory = new DuplexChannelFactory<IChatService>(new ClientCallback(), "ChatServiceEndPoint");
+            //_clientCallback = new ClientCallback();
+            //_channelFactory = new DuplexChannelFactory<IChatService>(new ClientCallback(), "ChatServiceEndPoint");
+            //_channelFactory = new DuplexChannelFactory<IChatService>(_clientCallback, "ChatServiceEndPoint");
+            //Server = _channelFactory.CreateChannel();
+
+            //Login on server function here if it fails, change connection to false.
+            //if(Server.Login(_LOGIN_, _PASSWORD_, _ROOM_NAME_) != 0) {
+            //    _IS_CONNECTION_DONE_ = false;
+            //}
+            //else {
+                //create new log file for current chat room
+            //    chatLog = new ChatLogAPI();
+            //    GenerateLogFile();
+
+            //    _IS_CONNECTION_DONE_ = true;
+            //}
+        }
+        public void InitializeVariables(string userName, string userPassword, string userRoomName) {
+            _LOGIN_ = userName;
+            _PASSWORD_ = userPassword;
+            _ROOM_NAME_ = userRoomName;
+        }
+        public void InitializeClientCallback() {
+            _clientCallback = new ClientCallback(this);
+        }
+        public bool InitializeServerConnection() {
+            _channelFactory = new DuplexChannelFactory<IChatService>(_clientCallback, "ChatServiceEndPoint");
             Server = _channelFactory.CreateChannel();
-
-            //create new log file for current chat room
-            chatLog = new ChatLogAPI();
-            GenerateLogFile();
-
-            _IS_CONNECTION_DONE_ = true;
-
+            if(Server.Login(_LOGIN_, _PASSWORD_, _ROOM_NAME_) != 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
         }
         private void UserMessageTextBox_OnKeyDownHandler(object sender, KeyEventArgs e) {
             if(e.Key == Key.Return) {
                 string tempString = UserMessageTextBox.Text;
                 if(tempString != null && tempString != "") {
-                    AddMessageToFlowDocument(tempString);
+                    //AddMessageToFlowDocument(tempString);
+                    Server.SendMessageToAll(tempString, _LOGIN_);
                     UserMessageTextBox.Clear();
                 }
             }
         }
 
         //should be activated by server response about whether message was accepted or not
-        private void AddMessageToFlowDocument(string message) {
+        public void AddMessageToFlowDocument(string message, string userName = "") {
             if(message == "" || message == null) {
                 return;
             }
             //string that will be outed by layoutmessage method so we can write stylised with html message to our log file
             string _message_to_log;
-            tempParagraph = layoutMessage(_LOGIN_, message, out _message_to_log);
+            tempParagraph = layoutMessage(userName, message, out _message_to_log);
             tempParagraph.Loaded += loadedBlock;
             OknoChatowe.Document.Blocks.Add(tempParagraph);
 

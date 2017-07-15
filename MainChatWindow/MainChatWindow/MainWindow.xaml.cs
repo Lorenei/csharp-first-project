@@ -21,8 +21,11 @@ namespace ChatClient {
     
     public partial class MainWindow : Window {
 
+        ChatWindow chatWindow;
+
         public MainWindow() {
             InitializeComponent();
+            chatWindow = new ChatWindow();
         }
 
         private void SignInButton_Click(object sender, RoutedEventArgs e) {
@@ -31,12 +34,17 @@ namespace ChatClient {
 
             //łaczenie z serwerem w celu zalogowania
             //utworzenie nowego okna z danymi użytkownika + serwera?
-            ChatWindow chatWindow = new ChatWindow(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text);
-
+            //ChatWindow chatWindow = new ChatWindow(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text);
+            chatWindow.InitializeVariables(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text);
+            chatWindow.InitializeClientCallback();
+            while(!chatWindow.InitializeServerConnection()) {
+                MessageBox.Show("Login failed, trying again.");
+            }
             //Check whether new window was able to connect with server and establish neccesary log files
             if(chatWindow._IS_CONNECTION_DONE_) {
-                chatWindow.Show();
                 this.Close();
+                chatWindow.Show();
+                chatWindow.
             }
             else {
                 MessageBox.Show("Error while connecting to server or establishing log file. Please try again.");

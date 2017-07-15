@@ -14,7 +14,7 @@ namespace ChatServer {
 
         public ConcurrentDictionary<string, ConnectedClient> _connectedClients = new ConcurrentDictionary<string, ConnectedClient>();
 
-        public int Login(string userName) {
+        public int Login(string userName, string userPassword, string userRommName) {
 
             foreach(var client in _connectedClients) {
                 if(client.Key.ToLower() == userName.ToLower()) {
@@ -26,17 +26,23 @@ namespace ChatServer {
             ConnectedClient newClient = new ConnectedClient();
             newClient.connection = establishedUserConnection;
             newClient.UserName = userName;
+            newClient.UserPassword = userPassword;
+            newClient.UserRoom = userRommName;
+            newClient.UserColor = 0;
 
             _connectedClients.TryAdd(userName, newClient);
+
+            Console.WriteLine("New user connected to server: " + userName);
 
             return 0;
         }
 
         public void SendMessageToAll(string message, string userName) {
+            Console.WriteLine("Message received from: " + userName + " that contains: " + message);
             foreach(var client in _connectedClients) {
-                if(client.Key.ToLower() != userName.ToLower()) {
+                //if(client.Key.ToLower() != userName.ToLower()) { //Uncomment this to make server skip person that sent this message.
                     client.Value.connection.GetMessage(message, userName);
-                }
+                //}
             }
         }
     }
