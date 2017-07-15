@@ -67,7 +67,7 @@ namespace ChatClient {
             _ROOM_NAME_ = userRoomName;
         }
         public void InitializeClientCallback() {
-            _clientCallback = new ClientCallback(this);
+            _clientCallback = new ClientCallback();
         }
         public bool InitializeServerConnection() {
             _channelFactory = new DuplexChannelFactory<IChatService>(_clientCallback, "ChatServiceEndPoint");
@@ -79,6 +79,10 @@ namespace ChatClient {
                 return true;
             }
         }
+        public void InitializeLogFile() {
+            chatLog = new ChatLogAPI();
+            GenerateLogFile();
+        }
         private void UserMessageTextBox_OnKeyDownHandler(object sender, KeyEventArgs e) {
             if(e.Key == Key.Return) {
                 string tempString = UserMessageTextBox.Text;
@@ -86,6 +90,7 @@ namespace ChatClient {
                     //AddMessageToFlowDocument(tempString);
                     Server.SendMessageToAll(tempString, _LOGIN_);
                     UserMessageTextBox.Clear();
+                    MessageBox.Show("Message sent");
                 }
             }
         }
