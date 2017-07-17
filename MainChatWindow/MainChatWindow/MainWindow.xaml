@@ -111,8 +111,18 @@
             Allows images near names and colors. Has context menu with options similar to
             the buttons below.
         -->
-        <ListBox Name="UsersListBox"  Margin="5" Grid.Column="2" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ContextMenu>
+        <ListBox Name="UsersListBox"  Margin="5" Grid.Column="2" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{DynamicResource UsersList}" Grid.IsSharedSizeScope="True">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="Key" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Key}" Grid.Column="0" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <!--<ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Kick" />
                     <MenuItem Header="Ban" />
@@ -141,7 +151,7 @@
                         user3_o_zajebiscie_dlugim_nicku
                     </TextBlock>
                 </StackPanel>
-            </ListBoxItem>
+            </ListBoxItem>-->
         </ListBox>
         <!-- 
             Buttons with chat functions ie BAN or color change. Need to have selected user

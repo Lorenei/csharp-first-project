@@ -11,11 +11,16 @@ namespace ChatClient {
 
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
     class ClientCallback : IClient {
+        MainWindow mainWindowReference;
         //ChatWindow _chatWindow;
 
         //public void LoadReference(ChatWindow chatWindow) {
             //_chatWindow = chatWindow;
         //}
+        public ClientCallback()
+        {
+            mainWindowReference = ((MainWindow)Application.Current.Windows.OfType<MainWindow>().FirstOrDefault());
+        }
         public void GetMessage(string message, string userName) {
             //((MainWindow)Application.Current.MainWindow).AddMessageToFlowDocument(message, userName);
             ((MainWindow)Application.Current.Windows.OfType<MainWindow>().FirstOrDefault()).AddMessageToFlowDocument(message, userName);
@@ -25,6 +30,11 @@ namespace ChatClient {
             //else {
                 //MessageBox.Show("Error: ClientCallback doesn't have reference to chat window at GetMessage function.");
             //}
+        }
+
+        public void GetUsersList(Dictionary<string, int> usersList)
+        {
+            mainWindowReference.RefreshUsersList(usersList);
         }
     }
 }

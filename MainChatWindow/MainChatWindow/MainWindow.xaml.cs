@@ -38,7 +38,7 @@ namespace ChatClient {
 
         public bool _IS_CONNECTION_DONE_ = false;
 
-        private Dictionary<string, int> usersList;
+        //private Dictionary<string, int> usersList;
 
         public MainWindow() {
             InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
@@ -77,11 +77,22 @@ namespace ChatClient {
             RefreshUsersList();
             InitializeLogFile();
         }
-        private void RefreshUsersList() {
-            Dictionary<string, int> usersList = Server.GetUsersList();
-            foreach(var user in usersList) {
-                ///UsersListBox.
+        public void RefreshUsersList(Dictionary<string, int> _usersList = null) {
+            Dictionary<string, int> usersList = new Dictionary<string, int>();
+            if (_usersList != null)
+            {
+                usersList = _usersList;
             }
+            else
+            {
+                usersList = Server.GetUsersList();
+            }
+            Resources["UsersList"] = usersList.OrderBy(user => user.Key);
+            //UsersListBox.Items.SortDescriptions.Clear();
+            //UsersListBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
+            //foreach(var user in usersList) {
+                //UsersListBox.
+            //}
         }
         public void InitializeVariables(string userName, string userPassword, string userRoomName) {
             _LOGIN_ = userName;

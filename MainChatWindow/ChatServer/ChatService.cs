@@ -47,7 +47,21 @@ namespace ChatServer {
 
             Console.WriteLine("New user connected to server: " + userName);
 
+            UpdateUsersListForAll(userName);
+
             return 0;
+        }
+
+        private void UpdateUsersListForAll(string userName)
+        {
+            foreach(var client in _connectedClients)
+            {
+                if(client.Key.ToLower() != userName.ToLower())
+                {
+                    Console.WriteLine("Sending users list to : " + client.Key);
+                    client.Value.connection.GetUsersList(this.GetUsersList());
+                }
+            }
         }
 
         public void SendMessageToAll(string message, string userName) {
