@@ -13,6 +13,8 @@ namespace ChatInterfaces {
         [OperationContract]
         int Login(string userName, string userPassword, string userRoomName);
         [OperationContract]
+        void Logout(string userName, string userRoomName);
+        [OperationContract]
         void SendMessageToAll(string message, string userName);
         [OperationContract]
         Dictionary<string, int> GetUsersList();

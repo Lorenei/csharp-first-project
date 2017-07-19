@@ -52,15 +52,32 @@ namespace ChatServer {
 
             return 0;
         }
+        public void Logout(string userName, string userRoomName)
+        {
+            ConnectedClient clientToRemove = new ConnectedClient();
+            if(_connectedClients.TryRemove(userName, out clientToRemove)) {
+                Console.WriteLine("Server removed client from dictionary: " + userName);
+            }
+            UpdateUsersListForAll(userName, 0, true);
+            Console.WriteLine("Sending request to clients to remove logged out user: " + userName);
+        }
 
-        private void UpdateUsersListForAll(string userName, int userColor)
+        private void UpdateUsersListForAll(string userName, int userColor = 0, bool isLoggingOut = false)
         {
             foreach(var client in _connectedClients)
             {
                 if(client.Key.ToLower() != userName.ToLower())
                 {
-                    Console.WriteLine("Sending new user to join users list to : " + client.Key);
-                    client.Value.connection.GetNewUserLogin(userName, userColor);
+                    if (!isLoggingOut)
+                    {
+                        Console.WriteLine("Sending new user to join users list to : " + client.Key);
+                        client.Value.connection.GetNewUserToList(userName, userColor);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Sending update of user logging out to: " + client.Key);
+                        client.Value.connection.GetUserRemovedFromList(userName);
+                    }
                 }
             }
         }

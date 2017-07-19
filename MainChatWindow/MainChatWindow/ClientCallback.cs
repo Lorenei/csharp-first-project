@@ -37,9 +37,14 @@ namespace ChatClient {
             mainWindowReference.RefreshUsersList(usersList);
         }
 
-        public void GetNewUserLogin(string userName, int userColor)
+        public void GetNewUserToList(string userName, int userColor)
         {
             mainWindowReference.AddUserToList(userName, userColor);
+        }
+
+        public void GetUserRemovedFromList(string userName)
+        {
+            mainWindowReference.RemoveUserFromList(userName);
         }
     }
 }

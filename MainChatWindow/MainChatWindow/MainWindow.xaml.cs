@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ServiceModel;
 using ChatInterfaces;
+using System.ComponentModel;
 
 namespace ChatClient {
     /// <summary>
@@ -42,7 +43,7 @@ namespace ChatClient {
 
         public MainWindow() {
             InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
-
+            Closing += new CancelEventHandler(LogoutFromServer);
             //_LOGIN_ = login;
             //_PASSWORD_ = password;
             //_ROOM_NAME_ = room;
@@ -78,20 +79,19 @@ namespace ChatClient {
             RefreshUsersList();
             InitializeLogFile();
         }
+        private void LogoutFromServer(object sender, CancelEventArgs e)
+        {
+            Server.Logout(_LOGIN_, _ROOM_NAME_);
+        }
         public void AddUserToList(string userName, int userColor)
         {
-            var myResources = Resources["UsersList"];
-            string newString = "";
-            foreach(var item in UsersListBox.Items)
-            {
-                newString += item;
-            }
-            //Dictionary<string, int> tempDic = new Dictionary<string, int>();
             usersList.Add(userName, userColor);
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
-            //UsersListBox.Items.Add(tempDic);
-            //UsersListBox.ItemsSource.
-            //MessageBox.Show(newString);
+        }
+        public void RemoveUserFromList(string userName)
+        {
+            usersList.Remove(userName);
+            Resources["UsersList"] = usersList.OrderBy(user => user.Key);
         }
         public void RefreshUsersList(Dictionary<string, int> _usersList = null) {
             

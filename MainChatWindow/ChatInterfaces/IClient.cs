@@ -12,6 +12,8 @@ namespace ChatInterfaces {
         [OperationContract]
         void GetUsersList(Dictionary<string, int> usersList);
         [OperationContract]
-        void GetNewUserLogin(string userName, int userColor);
+        void GetNewUserToList(string userName, int userColor);
+        [OperationContract]
+        void GetUserRemovedFromList(string userName);
     }
 }
