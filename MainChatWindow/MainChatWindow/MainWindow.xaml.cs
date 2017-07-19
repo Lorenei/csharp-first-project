@@ -38,7 +38,7 @@ namespace ChatClient {
 
         public bool _IS_CONNECTION_DONE_ = false;
 
-        //private Dictionary<string, int> usersList;
+        private Dictionary<string, int> usersList;
 
         public MainWindow() {
             InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
@@ -64,6 +64,7 @@ namespace ChatClient {
 
             //    _IS_CONNECTION_DONE_ = true;
             //}
+            Dictionary<string, int> usersList = new Dictionary<string, int>();
             InitializeVariables("Lorenei", "brak", "test_room");
             InitializeClientCallback();
             //temp number for debug multi clients
@@ -77,8 +78,23 @@ namespace ChatClient {
             RefreshUsersList();
             InitializeLogFile();
         }
+        public void AddUserToList(string userName, int userColor)
+        {
+            var myResources = Resources["UsersList"];
+            string newString = "";
+            foreach(var item in UsersListBox.Items)
+            {
+                newString += item;
+            }
+            //Dictionary<string, int> tempDic = new Dictionary<string, int>();
+            usersList.Add(userName, userColor);
+            Resources["UsersList"] = usersList.OrderBy(user => user.Key);
+            //UsersListBox.Items.Add(tempDic);
+            //UsersListBox.ItemsSource.
+            //MessageBox.Show(newString);
+        }
         public void RefreshUsersList(Dictionary<string, int> _usersList = null) {
-            Dictionary<string, int> usersList = new Dictionary<string, int>();
+            
             if (_usersList != null)
             {
                 usersList = _usersList;

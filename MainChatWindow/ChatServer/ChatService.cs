@@ -47,11 +47,23 @@ namespace ChatServer {
 
             Console.WriteLine("New user connected to server: " + userName);
 
-            UpdateUsersListForAll(userName);
+            //UpdateUsersListForAll(userName);
+            UpdateUsersListForAll(userName, newClient.UserColor);
 
             return 0;
         }
 
+        private void UpdateUsersListForAll(string userName, int userColor)
+        {
+            foreach(var client in _connectedClients)
+            {
+                if(client.Key.ToLower() != userName.ToLower())
+                {
+                    Console.WriteLine("Sending new user to join users list to : " + client.Key);
+                    client.Value.connection.GetNewUserLogin(userName, userColor);
+                }
+            }
+        }
         private void UpdateUsersListForAll(string userName)
         {
             foreach(var client in _connectedClients)
