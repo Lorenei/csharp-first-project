@@ -24,7 +24,7 @@ namespace ChatServer {
             return usersList;
         }
 
-        public int Login(string userName, string userPassword, string userRommName) {
+        public int Login(string userName, string userPassword, string userRoomName) {
 
             foreach(var client in _connectedClients) {
                 if(client.Key.ToLower() == userName.ToLower()) {
@@ -37,8 +37,11 @@ namespace ChatServer {
             newClient.connection = establishedUserConnection;
             newClient.UserName = userName;
             newClient.UserPassword = userPassword;
-            newClient.UserRoom = userRommName;
+            newClient.UserRoom = userRoomName;
             newClient.UserColor = 0;
+
+            //debug data. This ip adres need verification since its saying localhost and I have no idea whether its servers adres,endpoints adress or simple client adress
+            newClient.debugConnectionInfo = OperationContext.Current.Channel.LocalAddress.Uri.DnsSafeHost.ToString();
 
             if(_connectedClients.TryAdd(userName, newClient)) {
                 Console.WriteLine("New user added to dictionary");
@@ -46,6 +49,7 @@ namespace ChatServer {
             Console.WriteLine("User connection print: " + newClient.connection.ToString());
 
             Console.WriteLine("New user connected to server: " + userName);
+            Console.WriteLine("New users IP IS: " + newClient.debugConnectionInfo);
 
             //UpdateUsersListForAll(userName);
             UpdateUsersListForAll(userName, newClient.UserColor);
@@ -109,6 +113,13 @@ namespace ChatServer {
                     Console.WriteLine("Message sent to: " + client.Value.UserName);
                 }
             }
+        }
+
+        public string ShowIpInfo(string userName, string roomName)
+        {
+            //if userThatWantsToSee is OP return ip if not return error
+            string ipAddress = _connectedClients[userName].debugConnectionInfo;
+            return ipAddress;
         }
     }
 }

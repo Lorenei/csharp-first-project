@@ -18,5 +18,7 @@ namespace ChatInterfaces {
         void SendMessageToAll(string message, string userName);
         [OperationContract]
         Dictionary<string, int> GetUsersList();
+        [OperationContract]
+        string ShowIpInfo(string userName, string roomName);
     }
 }
