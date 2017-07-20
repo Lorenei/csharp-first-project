@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Collections.Concurrent;
 using System.Text;
+using System.ServiceModel.Channels;
 
 namespace ChatServer {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ChatService" in both code and config file together.
@@ -41,9 +42,14 @@ namespace ChatServer {
             newClient.UserColor = 0;
 
             //debug data. This ip adres need verification since its saying localhost and I have no idea whether its servers adres,endpoints adress or simple client adress
-            newClient.debugConnectionInfo = OperationContext.Current.Channel.LocalAddress.Uri.DnsSafeHost.ToString();
+            //newClient.debugConnectionInfo = OperationContext.Current.IncomingMessageProperties
+            OperationContext context = OperationContext.Current;
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+            newClient.debugConnectionInfo = endpoint.Address;
+            //^^^ temporary need to review this at later date, but it works
 
-            if(_connectedClients.TryAdd(userName, newClient)) {
+            if (_connectedClients.TryAdd(userName, newClient)) {
                 Console.WriteLine("New user added to dictionary");
             }
             Console.WriteLine("User connection print: " + newClient.connection.ToString());
