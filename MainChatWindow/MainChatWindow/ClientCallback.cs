@@ -23,9 +23,9 @@ namespace ChatClient {
         }
         public void GetMessage(string message, string userName) {
             //((MainWindow)Application.Current.MainWindow).AddMessageToFlowDocument(message, userName);
-            ((MainWindow)Application.Current.Windows.OfType<MainWindow>().FirstOrDefault()).AddMessageToFlowDocument(message, userName);
-            //if(_chatWindow != null) { 
-                //_chatWindow.AddMessageToFlowDocument(message, userName);
+            //((MainWindow)Application.Current.Windows.OfType<MainWindow>().FirstOrDefault()).AddMessageToFlowDocument(message, userName);
+            //if(mainWindowReference != null) { 
+                mainWindowReference.AddMessageToFlowDocument(message, userName);
             //}
             //else {
                 //MessageBox.Show("Error: ClientCallback doesn't have reference to chat window at GetMessage function.");

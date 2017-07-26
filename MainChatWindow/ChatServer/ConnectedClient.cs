@@ -13,6 +13,6 @@ namespace ChatServer {
         public string UserPassword { get; set; }
         public string UserRoom { get; set; } //Holds name of room where user is logged in
         public int UserColor { get; set; } //Holds color of users name that will be visible in logged in users list.
-        public string debugConnectionInfo;
+        public string UserIPAddress; //Holds users IP address
     }
 }

@@ -24,6 +24,10 @@
             <Setter Property="FontStyle" Value="Italic" />
             <Setter Property="Foreground" Value="Red" />
         </Style>
+        <Style x:Key="_COMMAND_SPAN_" TargetType="Span">
+            <Setter Property="FontStyle" Value="Normal" />
+            <Setter Property="Foreground" Value="DarkGreen" />
+        </Style>
         <Style x:Key="_ITALIC_">
             <Setter Property="Control.FontStyle" Value="Italic" />
         </Style>
@@ -160,7 +164,7 @@
         <WrapPanel Margin="5" HorizontalAlignment="Center" Grid.Column="2" Grid.Row="2">
             <Button Padding="5">BAN</Button>
             <Button Padding="5">KOP</Button>
-            <Button Padding="5">IP</Button>
+            <Button Name="ShowIPButton" Padding="5" Click="ShowIPButton_Click">IP</Button>
             <Button Padding="5">Priv</Button>
             <Button Padding="5">Kolor</Button>
         </WrapPanel>

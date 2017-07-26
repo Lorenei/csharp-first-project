@@ -65,7 +65,7 @@ namespace ChatClient {
 
             //    _IS_CONNECTION_DONE_ = true;
             //}
-            Dictionary<string, int> usersList = new Dictionary<string, int>();
+            usersList = new Dictionary<string, int>();
             InitializeVariables("Lorenei", "brak", "test_room");
             InitializeClientCallback();
             //temp number for debug multi clients
@@ -79,20 +79,27 @@ namespace ChatClient {
             RefreshUsersList();
             InitializeLogFile();
         }
+        //Send logout request to server before closing app window.
         private void LogoutFromServer(object sender, CancelEventArgs e)
         {
             Server.Logout(_LOGIN_, _ROOM_NAME_);
         }
+        //Add single user to users list and refresh the list
+        //Need some refactoring, since I don't think that replacing resources with whole new list is proper.
+        //Need to find solution how to make automatically sorted resources that allow to add one item to it.
         public void AddUserToList(string userName, int userColor)
         {
             usersList.Add(userName, userColor);
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
         }
+        //Remove single user from users list and refresh the list.
+        //Need the same refactoring as AddUserToList().
         public void RemoveUserFromList(string userName)
         {
             usersList.Remove(userName);
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
         }
+        //Refresh whole users list with list delivered in parameter or get new one from server.
         public void RefreshUsersList(Dictionary<string, int> _usersList = null) {
             
             if (_usersList != null)
@@ -104,11 +111,6 @@ namespace ChatClient {
                 usersList = Server.GetUsersList();
             }
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
-            //UsersListBox.Items.SortDescriptions.Clear();
-            //UsersListBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
-            //foreach(var user in usersList) {
-                //UsersListBox.
-            //}
         }
         public void InitializeVariables(string userName, string userPassword, string userRoomName) {
             _LOGIN_ = userName;
@@ -140,7 +142,7 @@ namespace ChatClient {
                     Server.SendMessageToAll(tempString, _LOGIN_);
                     AddMessageToFlowDocument(tempString, _LOGIN_);
                     UserMessageTextBox.Clear();
-                    MessageBox.Show("Message sent");
+                    //MessageBox.Show("Message sent"); //Debug function
                 }
             }
         }
@@ -152,7 +154,14 @@ namespace ChatClient {
             }
             //string that will be outed by layoutmessage method so we can write stylised with html message to our log file
             string _message_to_log;
-            tempParagraph = layoutMessage(userName, message, out _message_to_log);
+            if (userName != "" && userName != null) {
+                tempParagraph = layoutMessage(userName, message, out _message_to_log);
+            }
+            else {
+                tempParagraph = layoutMessage(userName, message, out _message_to_log, true);
+            }
+            //Adding loadedBlock event to event listener so when new message is rendered it will bring it to view (scroll to new message in chat)
+            //It does work, but probably should be added just once at initialization or something..
             tempParagraph.Loaded += loadedBlock;
             OknoChatowe.Document.Blocks.Add(tempParagraph);
 
@@ -171,7 +180,7 @@ namespace ChatClient {
 
         //method to layout message before adding it to the main chat window
         //_message_ is a string that goes out of this method and returns constructed, stylised (in future :P) html message that will be written in log file.
-        private Paragraph layoutMessage(string _nick, string _message, out string _message_) {
+        private Paragraph layoutMessage(string _nick, string _message, out string _message_, bool isThisCommand = false) {
             Paragraph tempP = new Paragraph();
             var _datetime_ = DateTime.Now;
 
@@ -179,10 +188,17 @@ namespace ChatClient {
             _time_span_.Style = (Style)(this.Resources["_TIME_SPAN_"]);
             tempP.Inlines.Add(_time_span_);
 
-            tempP.Inlines.Add(new Bold(new Run(_nick + ": ")));
+            if (!isThisCommand) {
+                tempP.Inlines.Add(new Bold(new Run(_nick + ": ")));
+            }
 
             _message_span_ = new Span(new Run(_message));
-            _message_span_.Style = (Style)(this.Resources["_ITALIC_SPAN_"]);
+            if (!isThisCommand) {
+                _message_span_.Style = (Style)(this.Resources["_ITALIC_SPAN_"]);
+            }
+            else {
+                _message_span_.Style = (Style)(this.Resources["_COMMAND_SPAN_"]);
+            }
             tempP.Inlines.Add(_message_span_);
 
             _message_ = layoutForLogMessage(_datetime_.ToString("HH:mm:ss"), _nick, _message);
@@ -208,7 +224,18 @@ namespace ChatClient {
             }
         }
 
-
-
+        private void ShowIPButton_Click(object sender, RoutedEventArgs e) {
+            if(UsersListBox.SelectedItem == null) {
+                MessageBox.Show("You have to select user on users list to see this persons IP");
+            }
+            else {
+                //Access to users list userName
+                //MessageBox.Show(((KeyValuePair<string, int>) UsersListBox.SelectedItem).Key);
+                string selectedUser = ((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key;
+                string ipAddress = Server.ShowIpInfo(_LOGIN_, selectedUser);
+                string message = "Command Run -> Show IP of user: " + selectedUser + " -> IP : " + ipAddress;
+                AddMessageToFlowDocument(message);
+            }
+        }
     }
 }

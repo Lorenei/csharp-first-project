@@ -71,10 +71,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="ChatWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="LoginForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -88,9 +84,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ChatLogAPI.cs" />
-    <Compile Include="ChatWindow.xaml.cs">
-      <DependentUpon>ChatWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ClientCallback.cs" />
     <Compile Include="LoginForm.xaml.cs">
       <DependentUpon>LoginForm.xaml</DependentUpon>

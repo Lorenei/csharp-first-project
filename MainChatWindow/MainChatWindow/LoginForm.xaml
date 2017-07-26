@@ -14,6 +14,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -26,7 +27,10 @@
         <PasswordBox Name="PasswordTextBox" Grid.Column="1" Grid.Row="1"/>
         <Label Content="Room: " Grid.Column="0" Grid.Row="2" />
         <TextBox Name="RoomTextBox" Grid.Column="1" Grid.Row="2" Text="TEST_ROOM" />
-        <Button Name="SignInButton" Content="Sign In" Grid.Column="1" Grid.Row="3" IsDefault="True" Click="SignInButton_Click"/>
+        <Label Content="Server: " Grid.Column="0" Grid.Row="3" />
+        <TextBox Name="ServerTextBox" Grid.Column="1" Grid.Row="3" Text="localhost:9000" />
+
+        <Button Name="SignInButton" Content="Sign In" Grid.Column="1" Grid.Row="4" IsDefault="True" Click="SignInButton_Click"/>
 
     </Grid>
 </Window>

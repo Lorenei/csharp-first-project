@@ -9,12 +9,14 @@ using System.Text;
 using System.ServiceModel.Channels;
 
 namespace ChatServer {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ChatService" in both code and config file together.
+
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
     public class ChatService : IChatService {
 
+        //This dictionary holds all of our currently connected users, together with some of their personal settings.
         public ConcurrentDictionary<string, ConnectedClient> _connectedClients = new ConcurrentDictionary<string, ConnectedClient>();
 
+        //This method returns dictionary of users with their personal name colors. Used by new conneted users since only they need whole list.
         public Dictionary<string, int> GetUsersList() {
             Dictionary<string, int> usersList = new Dictionary<string, int>();
 
@@ -46,7 +48,7 @@ namespace ChatServer {
             OperationContext context = OperationContext.Current;
             MessageProperties prop = context.IncomingMessageProperties;
             RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
-            newClient.debugConnectionInfo = endpoint.Address;
+            newClient.UserIPAddress = endpoint.Address;
             //^^^ temporary need to review this at later date, but it works
 
             if (_connectedClients.TryAdd(userName, newClient)) {
@@ -55,10 +57,10 @@ namespace ChatServer {
             Console.WriteLine("User connection print: " + newClient.connection.ToString());
 
             Console.WriteLine("New user connected to server: " + userName);
-            Console.WriteLine("New users IP IS: " + newClient.debugConnectionInfo);
+            Console.WriteLine("New users IP IS: " + newClient.UserIPAddress);
 
             //UpdateUsersListForAll(userName);
-            UpdateUsersListForAll(userName, newClient.UserColor);
+            UpdateUsersListForAll(newClient.UserName, newClient.UserColor);
 
             return 0;
         }
@@ -114,18 +116,16 @@ namespace ChatServer {
                 //WHICH FREEZES CLIENT AND MAKES IT TIMEOUT
                 //NEED TO FIND SOLUTION
                 if(client.Key.ToLower() != userName.ToLower()) { //Uncomment this to make server skip person that sent this message.
-                    Console.WriteLine("Entered foreach loop, trying to send message to: " + client.Value.UserName);
                     client.Value.connection.GetMessage(message, userName);
                     Console.WriteLine("Message sent to: " + client.Value.UserName);
                 }
             }
         }
 
-        public string ShowIpInfo(string userName, string roomName)
+        public string ShowIpInfo(string userName, string selectedUserName)
         {
-            //if userThatWantsToSee is OP return ip if not return error
-            string ipAddress = _connectedClients[userName].debugConnectionInfo;
-            return ipAddress;
+            //if userThatWantsToSee has admin privileges return ip if not return error
+            return _connectedClients[selectedUserName].UserIPAddress;
         }
     }
 }

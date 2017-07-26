@@ -6,8 +6,9 @@ using System.ServiceModel;
 using System.Text;
 
 namespace ChatInterfaces {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IChatService" in both code and config file together.
+
     [ServiceContract(CallbackContract = typeof(IClient))]
+
     public interface IChatService {
 
         [OperationContract]
@@ -19,6 +20,6 @@ namespace ChatInterfaces {
         [OperationContract]
         Dictionary<string, int> GetUsersList();
         [OperationContract]
-        string ShowIpInfo(string userName, string roomName);
+        string ShowIpInfo(string userName, string selectedUserName);
     }
 }
