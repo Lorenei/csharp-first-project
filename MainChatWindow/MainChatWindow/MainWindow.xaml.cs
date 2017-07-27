@@ -79,10 +79,23 @@ namespace ChatClient {
             RefreshUsersList();
             InitializeLogFile();
         }
+        ~MainWindow() {
+            CloseConnectionWithServer();
+        }
+        private void CloseConnectionWithServer() {
+            /*try {
+                _channelFactory.Close();
+            }
+            catch(Exception e) {
+                _channelFactory.Abort();
+            }*/
+            _channelFactory.Abort();
+        }
         //Send logout request to server before closing app window.
         private void LogoutFromServer(object sender, CancelEventArgs e)
         {
             Server.Logout(_LOGIN_, _ROOM_NAME_);
+            _channelFactory.Abort();
         }
         //Add single user to users list and refresh the list
         //Need some refactoring, since I don't think that replacing resources with whole new list is proper.
@@ -226,7 +239,7 @@ namespace ChatClient {
 
         private void ShowIPButton_Click(object sender, RoutedEventArgs e) {
             if(UsersListBox.SelectedItem == null) {
-                MessageBox.Show("You have to select user on users list to see this persons IP");
+                AddMessageToFlowDocument("Command Run -> Show IP of user: Failed! You have to select user from list.");
             }
             else {
                 //Access to users list userName
@@ -235,6 +248,33 @@ namespace ChatClient {
                 string ipAddress = Server.ShowIpInfo(_LOGIN_, selectedUser);
                 string message = "Command Run -> Show IP of user: " + selectedUser + " -> IP : " + ipAddress;
                 AddMessageToFlowDocument(message);
+            }
+        }
+
+        public void YouHaveBeenKicked(string userName) {
+            string message = "You have been kicked from server by: " + userName;
+            AddMessageToFlowDocument(message);
+            //this.Close();
+        }
+
+        private void KickUserButton_Click(object sender, RoutedEventArgs e) {
+            if (UsersListBox.SelectedItem == null) {
+                AddMessageToFlowDocument("Command Run -> Kick user: Failed! You have to select user from list.");
+            }
+            else if(((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key == _LOGIN_) {
+                AddMessageToFlowDocument("Command Run -> Kick user: Failed! You can't kick yourself.");
+            }
+            else {
+                string selectedUser = ((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key;
+                string message = "Command Run -> Kick user: " + selectedUser + ". Request have been sent to server.";
+                AddMessageToFlowDocument(message);
+                //This is temporary solution. It should be changed to properly kick someone.
+                //But since I have no idea how to handle true two-way connection with server, I have to make sure
+                //that server doesn't try to send 'remove user from list' function on the same channel.
+                if(Server.KickUserFromService(_LOGIN_, selectedUser, _ROOM_NAME_)) {
+                    //MessageBox.Show(_LOGIN_);
+                    RemoveUserFromList(selectedUser);
+                }
             }
         }
     }

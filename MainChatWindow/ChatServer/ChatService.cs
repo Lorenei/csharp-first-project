@@ -68,18 +68,31 @@ namespace ChatServer {
         {
             ConnectedClient clientToRemove = new ConnectedClient();
             if(_connectedClients.TryRemove(userName, out clientToRemove)) {
-                Console.WriteLine("Server removed client from dictionary: " + userName);
+                Console.WriteLine("Logout(string,string): Server removed client from dictionary: " + userName);
             }
             UpdateUsersListForAll(userName, 0, true);
-            Console.WriteLine("Sending request to clients to remove logged out user: " + userName);
+            Console.WriteLine("Logout(string,string): Sending request to clients to remove user from users list: " + userName);
+            //clientToRemove.connection.
+        }
+        private void Logout(string userName, string userRoomName, string dontInformThisUserAboutLogout) {
+            ConnectedClient clientToRemove = new ConnectedClient();
+            if (_connectedClients.TryRemove(userName, out clientToRemove)) {
+                Console.WriteLine("Logout(string,string,string): Server removed client from dictionary: " + userName);
+            }
+
+            //UpdateUsersListForAll(userName, 0, true, dontInformThisUserAboutLogout);
+            Console.WriteLine("Logout(string,string,string): Sending request to clients to remove user from users list: " + userName + " dontinformthisuseraboutlogout = " + dontInformThisUserAboutLogout);
         }
 
-        private void UpdateUsersListForAll(string userName, int userColor = 0, bool isLoggingOut = false)
+        private void UpdateUsersListForAll(string userName, int userColor = 0, bool isLoggingOut = false, string dontSendRequestToThisUser = null)
         {
             foreach(var client in _connectedClients)
             {
                 if(client.Key.ToLower() != userName.ToLower())
                 {
+                    //if(dontSendRequestToThisUser != null && dontSendRequestToThisUser != "" && dontSendRequestToThisUser.ToLower() == client.Key.ToLower()) {
+                        //continue;
+                    //}
                     if (!isLoggingOut)
                     {
                         Console.WriteLine("Sending new user to join users list to : " + client.Key);
@@ -89,6 +102,7 @@ namespace ChatServer {
                     {
                         Console.WriteLine("Sending update of user logging out to: " + client.Key);
                         client.Value.connection.GetUserRemovedFromList(userName);
+                        Console.WriteLine("dontsendrequesttothisuser = " + dontSendRequestToThisUser);
                     }
                 }
             }
@@ -126,6 +140,19 @@ namespace ChatServer {
         {
             //if userThatWantsToSee has admin privileges return ip if not return error
             return _connectedClients[selectedUserName].UserIPAddress;
+        }
+
+        public bool KickUserFromService(string userName, string selectedUserName, string userRoomName) {
+            //if user has admin rights allow him to kick user
+            Console.WriteLine("Request to kick user named: " + selectedUserName + " received from: " + userName);
+            try {
+                _connectedClients[selectedUserName].connection.YouHaveBeenKicked(userName);
+            }
+            catch(Exception e) {
+                Console.WriteLine("KickUserFromService(string,string,string): Error: " + e.ToString());
+            }
+            Logout(selectedUserName, userRoomName, userName);
+            return true;
         }
     }
 }

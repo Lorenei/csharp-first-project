@@ -46,5 +46,9 @@ namespace ChatClient {
         {
             mainWindowReference.RemoveUserFromList(userName);
         }
+
+        public void YouHaveBeenKicked(string userName) {
+            mainWindowReference.YouHaveBeenKicked(userName);
+        }
     }
 }
