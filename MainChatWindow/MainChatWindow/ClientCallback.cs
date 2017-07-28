@@ -50,5 +50,9 @@ namespace ChatClient {
         public void YouHaveBeenKicked(string userName) {
             mainWindowReference.YouHaveBeenKicked(userName);
         }
+
+        public void YouHaveBeenBanned(string userName) {
+            mainWindowReference.YouHaveBeenBanned(userName);
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace ChatServer {
         //This dictionary holds all of our currently connected users, together with some of their personal settings.
         public ConcurrentDictionary<string, ConnectedClient> _connectedClients = new ConcurrentDictionary<string, ConnectedClient>();
 
+        private ConcurrentDictionary<string, BanSettings> BanList = new ConcurrentDictionary<string, BanSettings>();
+
         //This method returns dictionary of users with their personal name colors. Used by new conneted users since only they need whole list.
         public Dictionary<string, int> GetUsersList() {
             Dictionary<string, int> usersList = new Dictionary<string, int>();
@@ -29,15 +31,32 @@ namespace ChatServer {
 
         public int Login(string userName, string userPassword, string userRoomName) {
 
-            foreach(var client in _connectedClients) {
+            OperationContext context = OperationContext.Current;
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+
+            var establishedUserConnection = context.GetCallbackChannel<IClient>();
+
+            ConnectedClient newClient = new ConnectedClient();
+            newClient.connection = establishedUserConnection;
+            newClient.UserIPAddress = endpoint.Address;
+
+            if(BanList.ContainsKey(newClient.UserIPAddress)) {
+                if(!BanList[newClient.UserIPAddress].CheckIfStillValid()) {
+                    BanSettings tempBanSettings = new BanSettings();
+                    BanList.TryRemove(newClient.UserIPAddress, out tempBanSettings);
+                }
+                else {
+                    context.InstanceContext.Abort();
+                }
+            }
+
+            foreach (var client in _connectedClients) {
                 if(client.Key.ToLower() == userName.ToLower()) {
                     return 1;
                 }
             }
-            var establishedUserConnection = OperationContext.Current.GetCallbackChannel<IClient>();
 
-            ConnectedClient newClient = new ConnectedClient();
-            newClient.connection = establishedUserConnection;
             newClient.UserName = userName;
             newClient.UserPassword = userPassword;
             newClient.UserRoom = userRoomName;
@@ -45,10 +64,6 @@ namespace ChatServer {
 
             //debug data. This ip adres need verification since its saying localhost and I have no idea whether its servers adres,endpoints adress or simple client adress
             //newClient.debugConnectionInfo = OperationContext.Current.IncomingMessageProperties
-            OperationContext context = OperationContext.Current;
-            MessageProperties prop = context.IncomingMessageProperties;
-            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
-            newClient.UserIPAddress = endpoint.Address;
             //^^^ temporary need to review this at later date, but it works
 
             if (_connectedClients.TryAdd(userName, newClient)) {
@@ -153,6 +168,26 @@ namespace ChatServer {
             }
             Logout(selectedUserName, userRoomName, userName);
             return true;
+        }
+
+        public bool BanUserFromService(string userName, string selectedUserName, string userRoomName) {
+
+            Console.WriteLine("Request to ban user named: " + selectedUserName + " received from: " + userName);
+            try {
+                _connectedClients[selectedUserName].connection.YouHaveBeenBanned(userName);
+            }
+            catch(Exception e) {
+                Console.WriteLine("BanUserFromService(string, string, string): Error: " + e.ToString());
+            }
+            AddToBanList(selectedUserName, userRoomName);
+            Logout(selectedUserName, userRoomName, userName);
+
+            return true;
+        }
+
+        private void AddToBanList(string bannedUserName, string roomName) {
+            BanList.TryAdd(_connectedClients[bannedUserName].UserIPAddress, new BanSettings());
+            Console.WriteLine("AddToBanList(string,string): Added new user to ban list: " + bannedUserName);
         }
     }
 }

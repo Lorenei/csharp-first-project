@@ -41,6 +41,8 @@ namespace ChatClient {
 
         private Dictionary<string, int> usersList;
 
+        private bool AmIBeingKicked = false;
+
         public MainWindow() {
             InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
             Closing += new CancelEventHandler(LogoutFromServer);
@@ -80,7 +82,9 @@ namespace ChatClient {
             InitializeLogFile();
         }
         ~MainWindow() {
-            CloseConnectionWithServer();
+            if (!AmIBeingKicked) {
+                CloseConnectionWithServer();
+            }
         }
         private void CloseConnectionWithServer() {
             /*try {
@@ -94,6 +98,7 @@ namespace ChatClient {
         //Send logout request to server before closing app window.
         private void LogoutFromServer(object sender, CancelEventArgs e)
         {
+            if (AmIBeingKicked) return;
             Server.Logout(_LOGIN_, _ROOM_NAME_);
             _channelFactory.Abort();
         }
@@ -136,6 +141,7 @@ namespace ChatClient {
         public bool InitializeServerConnection() {
             _channelFactory = new DuplexChannelFactory<IChatService>(new ClientCallback(), "ChatServiceEndPoint");
             Server = _channelFactory.CreateChannel();
+            
             if(Server.Login(_LOGIN_, _PASSWORD_, _ROOM_NAME_) != 0) {
                 return false;
             }
@@ -254,7 +260,13 @@ namespace ChatClient {
         public void YouHaveBeenKicked(string userName) {
             string message = "You have been kicked from server by: " + userName;
             AddMessageToFlowDocument(message);
-            //this.Close();
+            AmIBeingKicked = true;
+            this.Close();
+        }
+        public void YouHaveBeenBanned(string userName) {
+            AddMessageToFlowDocument("You have been banned from server by: " + userName);
+            AmIBeingKicked = true;
+            this.Close();
         }
 
         private void KickUserButton_Click(object sender, RoutedEventArgs e) {
@@ -273,6 +285,22 @@ namespace ChatClient {
                 //that server doesn't try to send 'remove user from list' function on the same channel.
                 if(Server.KickUserFromService(_LOGIN_, selectedUser, _ROOM_NAME_)) {
                     //MessageBox.Show(_LOGIN_);
+                    RemoveUserFromList(selectedUser);
+                }
+            }
+        }
+
+        private void BanUserButton_Click(object sender, RoutedEventArgs e) {
+            if (UsersListBox.SelectedItem == null) {
+                AddMessageToFlowDocument("Command Run -> Ban User: Failed! You have to select user from list.");
+            }
+            else if (((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key == _LOGIN_) {
+                AddMessageToFlowDocument("Command Run -> Ban user: Failed! You can't ban yourself.");
+            }
+            else {
+                string selectedUser = ((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key;
+                AddMessageToFlowDocument("Command Run -> Ban user: " + selectedUser + ". Request have been sent to server.");
+                if(Server.BanUserFromService(_LOGIN_, selectedUser, _ROOM_NAME_)) {
                     RemoveUserFromList(selectedUser);
                 }
             }

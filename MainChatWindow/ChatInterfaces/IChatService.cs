@@ -28,5 +28,8 @@ namespace ChatInterfaces {
 
         [OperationContract]
         bool KickUserFromService(string userName, string selectedUserName, string userRoomName);
+
+        [OperationContract]
+        bool BanUserFromService(string userName, string selectedUserName, string userRoomName);
     }
 }

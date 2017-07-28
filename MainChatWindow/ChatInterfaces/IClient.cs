@@ -22,5 +22,8 @@ namespace ChatInterfaces {
 
         [OperationContract]
         void YouHaveBeenKicked(string userName);
+
+        [OperationContract]
+        void YouHaveBeenBanned(string userName);
     }
 }

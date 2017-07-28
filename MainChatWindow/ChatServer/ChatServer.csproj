@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BanSettings.cs" />
     <Compile Include="ChatService.cs" />
     <Compile Include="ConnectedClient.cs" />
     <Compile Include="Program.cs" />

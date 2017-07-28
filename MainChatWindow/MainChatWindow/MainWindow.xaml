@@ -163,7 +163,7 @@
             in the list above.
         -->
         <WrapPanel Margin="5" HorizontalAlignment="Center" Grid.Column="2" Grid.Row="2">
-            <Button Padding="5">BAN</Button>
+            <Button Name="BanUserButton" Padding="5" Click="BanUserButton_Click">BAN</Button>
             <Button Name="KickUserButton" Padding="5" Click="KickUserButton_Click">KOP</Button>
             <Button Name="ShowIPButton" Padding="5" Click="ShowIPButton_Click">IP</Button>
             <Button Padding="5">Priv</Button>
