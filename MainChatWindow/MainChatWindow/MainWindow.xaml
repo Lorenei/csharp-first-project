@@ -123,7 +123,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition SharedSizeGroup="Key" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Key}" Grid.Column="0"/>
+                        <TextBlock Text="{Binding Key}" Foreground="{Binding Value}" Grid.Column="0"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

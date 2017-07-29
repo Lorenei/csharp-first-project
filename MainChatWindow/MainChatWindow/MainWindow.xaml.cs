@@ -312,8 +312,10 @@ namespace ChatClient {
         private void OnColorPick(object sender, SelectionChangedEventArgs e)
         {
             Color selectedColor = (Color)(ColorPickerComboBox.SelectedItem as PropertyInfo).GetValue(null, null);
-            AddMessageToFlowDocument(selectedColor.ToString());
+            UpdateColorForUser(_LOGIN_, selectedColor);
+            AddMessageToFlowDocument("OnColorPick(object, selectionchangedeventargs): Zmieniono swój kolor na: " + selectedColor.ToString());
             Server.ChangeUserColor(_LOGIN_, selectedColor);
+            AddMessageToFlowDocument("OnColorPick(object, selectionchangedeventargs): WYsłano informację do serwera o zmianie koloru użytkownika.");
         }
 
         public void GetUserColor(string userName, Color userColor)
@@ -321,18 +323,16 @@ namespace ChatClient {
             if (usersList.ContainsKey(userName))
             {
                 AddMessageToFlowDocument("GetUserColor(string,Color): Znaleziono klucz w słowniku.");
-                usersList[userName] = userColor.ToString();
-                AddMessageToFlowDocument("GetUserColor(string,Color): Podmieniono kolor użytkownika: " + usersList[userName]);
-                Resources["UsersList"] = usersList.OrderBy(user => user.Key);
-                AddMessageToFlowDocument("GetUserColor(string,Color): Odświeżono resources.");
-                //foreach(ListBoxItem item in UsersListBox.Items)
-                foreach(var item in UsersListBox.Items)
-                {
-                    AddMessageToFlowDocument("GetUserColor(string,Color): Wejście w foreach: " + item.ToString());
-                    //((ListBoxItem)item).Foreground = new SolidColorBrush(userColor);
-                    //item.Foreground = new SolidColorBrush(userColor);
-                }
+                UpdateColorForUser(userName, userColor);
             }
+        }
+
+        private void UpdateColorForUser(string userName, Color userColor)
+        {
+            usersList[userName] = userColor.ToString();
+            AddMessageToFlowDocument("UpdateColorForUser(string,color): Podmieniono kolor użytkownika: " + userName + " na: " + userColor.ToString());
+            Resources["UsersList"] = usersList.OrderBy(user => user.Key);
+            AddMessageToFlowDocument("UpdateColorForUser(string,color): Odświeżono resources.");
         }
     }
 }
