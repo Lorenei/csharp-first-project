@@ -44,48 +44,33 @@ namespace ChatClient {
 
         private bool AmIBeingKicked = false;
 
-        public MainWindow() {
+        public MainWindow(string userName, string userPassword, string userRoomName) {
             InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
-            Closing += new CancelEventHandler(LogoutFromServer);
+            //Closing += new CancelEventHandler(LogoutFromServer);
 
             ColorPickerComboBox.ItemsSource = typeof(Colors).GetProperties();
-            //_LOGIN_ = login;
-            //_PASSWORD_ = password;
-            //_ROOM_NAME_ = room;
 
-            //Service initialization
-            //_clientCallback = new ClientCallback();
-            //_channelFactory = new DuplexChannelFactory<IChatService>(new ClientCallback(), "ChatServiceEndPoint");
-            //_channelFactory = new DuplexChannelFactory<IChatService>(_clientCallback, "ChatServiceEndPoint");
-            //Server = _channelFactory.CreateChannel();
-
-            //Login on server function here if it fails, change connection to false.
-            //if(Server.Login(_LOGIN_, _PASSWORD_, _ROOM_NAME_) != 0) {
-            //    _IS_CONNECTION_DONE_ = false;
-            //}
-            //else {
-            //create new log file for current chat room
-            //    chatLog = new ChatLogAPI();
-            //    GenerateLogFile();
-
-            //    _IS_CONNECTION_DONE_ = true;
-            //}
             usersList = new Dictionary<string, string>();
-            InitializeVariables("Lorenei", "brak", "test_room");
+            InitializeVariables(userName, userPassword, userRoomName);
             InitializeClientCallback();
+            if(!InitializeServerConnection())
+            {
+                MessageBox.Show("Failed to login. Application shutdown.");
+                Application.Current.Shutdown();
+            }
             //temp number for debug multi clients
-            int tmpLogin = 0;
+            /*int tmpLogin = 0;
             _LOGIN_ += tmpLogin;
             while(!InitializeServerConnection()) {
                 MessageBox.Show("Login failed, trying again.");
                 tmpLogin++;
                 _LOGIN_ = "Lorenei" + tmpLogin;
-            }
+            }*/
             RefreshUsersList();
             InitializeLogFile();
         }
         ~MainWindow() {
-            if (!AmIBeingKicked) {
+            if (!AmIBeingKicked && _IS_CONNECTION_DONE_) {
                 CloseConnectionWithServer();
             }
         }
@@ -102,7 +87,14 @@ namespace ChatClient {
         private void LogoutFromServer(object sender, CancelEventArgs e)
         {
             if (AmIBeingKicked) return;
-            Server.Logout(_LOGIN_, _ROOM_NAME_);
+            try
+            {
+                Server.Logout(_LOGIN_, _ROOM_NAME_);
+            }
+            catch(Exception err)
+            {
+                AddMessageToFlowDocument("Failed to contact server about logout. Error e: " + err.ToString());
+            }
             _channelFactory.Abort();
         }
         //Add single user to users list and refresh the list
@@ -112,6 +104,7 @@ namespace ChatClient {
         {
             usersList.Add(userName, userColor.ToString());
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
+            AddMessageToFlowDocument(userName + " joined chat room.");
         }
         //Remove single user from users list and refresh the list.
         //Need the same refactoring as AddUserToList().
@@ -119,6 +112,7 @@ namespace ChatClient {
         {
             usersList.Remove(userName);
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
+            AddMessageToFlowDocument(userName + " left chat room.");
         }
         //Refresh whole users list with list delivered in parameter or get new one from server.
         public void RefreshUsersList(Dictionary<string, string> _usersList = null) {
@@ -149,6 +143,8 @@ namespace ChatClient {
                 return false;
             }
             else {
+                Closing += new CancelEventHandler(LogoutFromServer);
+                _IS_CONNECTION_DONE_ = true;
                 return true;
             }
         }
@@ -161,7 +157,14 @@ namespace ChatClient {
                 string tempString = UserMessageTextBox.Text;
                 if(tempString != null && tempString != "") {
                     //AddMessageToFlowDocument(tempString);
-                    Server.SendMessageToAll(tempString, _LOGIN_);
+                    try
+                    {
+                        Server.SendMessageToAll(tempString, _LOGIN_);
+                    }
+                    catch(Exception err)
+                    {
+                        AddMessageToFlowDocument("Failed to send message to server. Error e: " + err.ToString());
+                    }
                     AddMessageToFlowDocument(tempString, _LOGIN_);
                     UserMessageTextBox.Clear();
                     //MessageBox.Show("Message sent"); //Debug function
@@ -286,7 +289,16 @@ namespace ChatClient {
                 //This is temporary solution. It should be changed to properly kick someone.
                 //But since I have no idea how to handle true two-way connection with server, I have to make sure
                 //that server doesn't try to send 'remove user from list' function on the same channel.
-                if(Server.KickUserFromService(_LOGIN_, selectedUser, _ROOM_NAME_)) {
+                bool tempKick = false;
+                try
+                {
+                    tempKick = Server.KickUserFromService(_LOGIN_, selectedUser, _ROOM_NAME_);
+                }
+                catch(Exception err)
+                {
+                    AddMessageToFlowDocument("Failed to contact server about kicking user. Error e: " + err.ToString());
+                }
+                if(tempKick) {
                     //MessageBox.Show(_LOGIN_);
                     RemoveUserFromList(selectedUser);
                 }
@@ -314,7 +326,14 @@ namespace ChatClient {
             Color selectedColor = (Color)(ColorPickerComboBox.SelectedItem as PropertyInfo).GetValue(null, null);
             UpdateColorForUser(_LOGIN_, selectedColor);
             AddMessageToFlowDocument("OnColorPick(object, selectionchangedeventargs): Zmieniono swój kolor na: " + selectedColor.ToString());
-            Server.ChangeUserColor(_LOGIN_, selectedColor);
+            try
+            {
+                Server.ChangeUserColor(_LOGIN_, selectedColor);
+            }
+            catch(Exception err)
+            {
+                AddMessageToFlowDocument("Failed to contact server about changing color. Error e: " + err.ToString());
+            }
             AddMessageToFlowDocument("OnColorPick(object, selectionchangedeventargs): WYsłano informację do serwera o zmianie koloru użytkownika.");
         }
 

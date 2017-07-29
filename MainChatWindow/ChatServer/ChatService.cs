@@ -19,6 +19,13 @@ namespace ChatServer {
 
         private ConcurrentDictionary<string, BanSettings> BanList = new ConcurrentDictionary<string, BanSettings>();
 
+        private ConcurrentDictionary<string, string> _usersDatabaseDictionary = new ConcurrentDictionary<string, string>();
+
+        public ChatService(ConcurrentDictionary<string,string> usersDatabaseDictionary)
+        {
+            _usersDatabaseDictionary = usersDatabaseDictionary;
+        }
+
         //This method returns dictionary of users with their personal name colors. Used by new conneted users since only they need whole list.
         public Dictionary<string, string> GetUsersList() {
             Dictionary<string, string> usersList = new Dictionary<string, string>();
@@ -42,13 +49,23 @@ namespace ChatServer {
             newClient.connection = establishedUserConnection;
             newClient.UserIPAddress = endpoint.Address;
 
-            if(BanList.ContainsKey(newClient.UserIPAddress)) {
-                if(!BanList[newClient.UserIPAddress].CheckIfStillValid()) {
+            Console.WriteLine("new user trying to log in with login: " + userName + " and password: " + userPassword);
+
+            //Commented out things that make ban for IP address. It makes impossible to localtest it.
+            //Bans for username instead.
+
+            //if(BanList.ContainsKey(newClient.UserIPAddress)) {
+            if(BanList.ContainsKey(userName)) { 
+                //if(!BanList[newClient.UserIPAddress].CheckIfStillValid()) {
+                if(!BanList[userName].CheckIfStillValid()) { 
                     BanSettings tempBanSettings = new BanSettings();
-                    BanList.TryRemove(newClient.UserIPAddress, out tempBanSettings);
+                    //BanList.TryRemove(newClient.UserIPAddress, out tempBanSettings);
+                    BanList.TryRemove(userName, out tempBanSettings);
                 }
                 else {
-                    context.InstanceContext.Abort();
+                    //context.InstanceContext.Abort();
+                    Console.WriteLine("User is banned. Login failed.");
+                    return 1;
                 }
             }
 
@@ -56,6 +73,18 @@ namespace ChatServer {
                 if(client.Key.ToLower() == userName.ToLower()) {
                     return 1;
                 }
+            }
+
+            if(_usersDatabaseDictionary.ContainsKey(userName))
+            {
+                if(_usersDatabaseDictionary[userName] != userPassword)
+                {
+                    return 1;
+                } 
+            }
+            else
+            {
+                return 1;
             }
 
             newClient.UserName = userName;
@@ -96,7 +125,7 @@ namespace ChatServer {
                 Console.WriteLine("Logout(string,string,string): Server removed client from dictionary: " + userName);
             }
 
-            //UpdateUsersListForAll(userName, 0, true, dontInformThisUserAboutLogout);
+            UpdateUsersListForAll(userName, clientToRemove.UserColor, true, dontInformThisUserAboutLogout);
             Console.WriteLine("Logout(string,string,string): Sending request to clients to remove user from users list: " + userName + " dontinformthisuseraboutlogout = " + dontInformThisUserAboutLogout);
         }
 
@@ -106,19 +135,39 @@ namespace ChatServer {
             {
                 if(client.Key.ToLower() != userName.ToLower())
                 {
-                    //if(dontSendRequestToThisUser != null && dontSendRequestToThisUser != "" && dontSendRequestToThisUser.ToLower() == client.Key.ToLower()) {
-                        //continue;
-                    //}
-                    if (!isLoggingOut)
+                    if (dontSendRequestToThisUser == null || dontSendRequestToThisUser == "" || (dontSendRequestToThisUser != null && dontSendRequestToThisUser != "" && dontSendRequestToThisUser.ToLower() != client.Key.ToLower()))
                     {
-                        Console.WriteLine("Sending new user to join users list to : " + client.Key);
-                        client.Value.connection.GetNewUserToList(userName, userColor);
+                        //continue;
+                        //}
+                        if (!isLoggingOut)
+                        {
+                            Console.WriteLine("Sending new user to join users list to : " + client.Key);
+                            try
+                            {
+                                client.Value.connection.GetNewUserToList(userName, userColor);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Failed to send new joined user to : " + client.Key + ". Error e: " + e.ToString());
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Sending update of user logging out to: " + client.Key);
+                            try
+                            {
+                                client.Value.connection.GetUserRemovedFromList(userName);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Failed to send user logged out to: " + client.Key + ". Error e: " + e.ToString());
+                            }
+                            //Console.WriteLine("dontsendrequesttothisuser = " + dontSendRequestToThisUser);
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Sending update of user logging out to: " + client.Key);
-                        client.Value.connection.GetUserRemovedFromList(userName);
-                        Console.WriteLine("dontsendrequesttothisuser = " + dontSendRequestToThisUser);
+                        Console.WriteLine("Didnt send request to log out kicked user to: " + dontSendRequestToThisUser);
                     }
                 }
             }
@@ -130,7 +179,14 @@ namespace ChatServer {
                 if(client.Key.ToLower() != userName.ToLower())
                 {
                     Console.WriteLine("Sending users list to : " + client.Key);
-                    client.Value.connection.GetUsersList(this.GetUsersList());
+                    try
+                    {
+                        client.Value.connection.GetUsersList(this.GetUsersList());
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("Failed to send users list to : " + client.Key + ". Error e: " + e.ToString());
+                    }
                 }
             }
         }
@@ -146,8 +202,15 @@ namespace ChatServer {
                 //WHICH FREEZES CLIENT AND MAKES IT TIMEOUT
                 //NEED TO FIND SOLUTION
                 if(client.Key.ToLower() != userName.ToLower()) { //Uncomment this to make server skip person that sent this message.
-                    client.Value.connection.GetMessage(message, userName);
-                    Console.WriteLine("Message sent to: " + client.Value.UserName);
+                    try
+                    {
+                        client.Value.connection.GetMessage(message, userName);
+                        Console.WriteLine("Message sent to: " + client.Value.UserName);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Failed to send message to: " + client.Key + ". Error e: " + e.ToString());
+                    }
                 }
             }
         }
@@ -187,7 +250,8 @@ namespace ChatServer {
         }
 
         private void AddToBanList(string bannedUserName, string roomName) {
-            BanList.TryAdd(_connectedClients[bannedUserName].UserIPAddress, new BanSettings());
+            //BanList.TryAdd(_connectedClients[bannedUserName].UserIPAddress, new BanSettings());
+            BanList.TryAdd(_connectedClients[bannedUserName].UserName, new BanSettings());
             Console.WriteLine("AddToBanList(string,string): Added new user to ban list: " + bannedUserName);
         }
 
@@ -208,8 +272,15 @@ namespace ChatServer {
             {
                 if(client.Key.ToLower() != userName.ToLower())
                 {
-                    client.Value.connection.GetUserColor(userName, userColor);
-                    Console.WriteLine("InformUsersAboutColorChange(string,Color): Sending request to change users color on list to: " + client.Value.UserName);
+                    try
+                    {
+                        client.Value.connection.GetUserColor(userName, userColor);
+                        Console.WriteLine("InformUsersAboutColorChange(string,Color): Sending request to change users color on list to: " + client.Value.UserName);
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("Failed to send informationa bout color change to: " + client.Key + ". Error e: " + e.ToString());
+                    }
                 }
             }
         }

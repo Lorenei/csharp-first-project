@@ -30,29 +30,28 @@ namespace ChatClient {
             //Disable all input boxes so user can't change anything while program is trying to establish connection with server.
             DisableInputBoxes();
 
-            //łaczenie z serwerem w celu zalogowania
-            //utworzenie nowego okna z danymi użytkownika + serwera?
-
+            mainWindow = new MainWindow(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text);
             //mainWindow.InitializeVariables(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text);
-            //mainWindow.InitializeClientCallback();
-            //while(!mainWindow.InitializeServerConnection()) {
-            //MessageBox.Show("Login failed, trying again.");
+            //if (!mainWindow._IS_CONNECTION_DONE_)
+            //{
+                //MessageBox.Show("Failed to login!");
+                //EnableInputBoxes();
+                //return;
             //}
+
             //mainWindow.InitializeLogFile();
-            //Check whether new window was able to connect with server and establish neccesary log files
-            //if(chatWindow._IS_CONNECTION_DONE_) {
-            mainWindow = new MainWindow();
+            //mainWindow.InitializeClientCallback();
+            //mainWindow.RefreshUsersList();
             this.Hide();
             mainWindow.Show();
-            this.Owner = mainWindow;
-            //this.Owner = chatWindow;
-            //chatWindow.
-            //}
-            //else {
-            //MessageBox.Show("Error while connecting to server or establishing log file. Please try again.");
-            //EnableInputBoxes();
-            //chatWindow.Close();
-            //}
+            try
+            {
+                this.Owner = mainWindow;
+            }
+            catch(Exception err)
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         private void EnableInputBoxes() {
