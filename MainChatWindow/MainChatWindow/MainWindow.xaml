@@ -123,7 +123,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition SharedSizeGroup="Key" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Key}" Grid.Column="0" />
+                        <TextBlock Text="{Binding Key}" Grid.Column="0"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -164,10 +164,57 @@
         -->
         <WrapPanel Margin="5" HorizontalAlignment="Center" Grid.Column="2" Grid.Row="2">
             <Button Name="BanUserButton" Padding="5" Click="BanUserButton_Click">BAN</Button>
-            <Button Name="KickUserButton" Padding="5" Click="KickUserButton_Click">KOP</Button>
+            <Button Name="KickUserButton" Padding="5" Click="KickUserButton_Click">KICK</Button>
             <Button Name="ShowIPButton" Padding="5" Click="ShowIPButton_Click">IP</Button>
-            <Button Padding="5">Priv</Button>
-            <Button Padding="5">Kolor</Button>
+            <ComboBox Name="ColorPickerComboBox" Width="85" SelectionChanged="OnColorPick">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Fill="{Binding Name}" Width="16" Height="16" Margin="0,2,5,2" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <!--<ComboBox Name="ColorSetterComboBox" Width="90">
+                <ComboBoxItem  IsSelected="True">
+                    <TextBlock Text="no color" Background="White" Width="80" />
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="Aqua" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="Blue"  Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="BlueViolet" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="Brown" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="BurlyWood" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="CadetBlue" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="Chartreuse" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="Chocolate" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="Coral" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="CornflowerBlue" Width="80"/>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <TextBlock Background="Crimson" Width="80"/>
+                </ComboBoxItem>
+            </ComboBox>-->
+
         </WrapPanel>
         <Grid Margin="5" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3">
             <Grid.RowDefinitions>

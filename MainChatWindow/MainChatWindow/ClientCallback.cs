@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ServiceModel;
 using System.Windows;
 using ChatInterfaces;
+using System.Windows.Media;
 
 namespace ChatClient {
 
@@ -32,12 +33,12 @@ namespace ChatClient {
             //}
         }
 
-        public void GetUsersList(Dictionary<string, int> usersList)
+        public void GetUsersList(Dictionary<string, string> usersList)
         {
             mainWindowReference.RefreshUsersList(usersList);
         }
 
-        public void GetNewUserToList(string userName, int userColor)
+        public void GetNewUserToList(string userName, Color userColor)
         {
             mainWindowReference.AddUserToList(userName, userColor);
         }
@@ -53,6 +54,11 @@ namespace ChatClient {
 
         public void YouHaveBeenBanned(string userName) {
             mainWindowReference.YouHaveBeenBanned(userName);
+        }
+
+        public void GetUserColor(string userName, Color userColor)
+        {
+            mainWindowReference.GetUserColor(userName, userColor);
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.ServiceModel;
 using ChatInterfaces;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace ChatClient {
     /// <summary>
@@ -39,13 +40,15 @@ namespace ChatClient {
 
         public bool _IS_CONNECTION_DONE_ = false;
 
-        private Dictionary<string, int> usersList;
+        private Dictionary<string, string> usersList;
 
         private bool AmIBeingKicked = false;
 
         public MainWindow() {
             InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
             Closing += new CancelEventHandler(LogoutFromServer);
+
+            ColorPickerComboBox.ItemsSource = typeof(Colors).GetProperties();
             //_LOGIN_ = login;
             //_PASSWORD_ = password;
             //_ROOM_NAME_ = room;
@@ -67,7 +70,7 @@ namespace ChatClient {
 
             //    _IS_CONNECTION_DONE_ = true;
             //}
-            usersList = new Dictionary<string, int>();
+            usersList = new Dictionary<string, string>();
             InitializeVariables("Lorenei", "brak", "test_room");
             InitializeClientCallback();
             //temp number for debug multi clients
@@ -105,9 +108,9 @@ namespace ChatClient {
         //Add single user to users list and refresh the list
         //Need some refactoring, since I don't think that replacing resources with whole new list is proper.
         //Need to find solution how to make automatically sorted resources that allow to add one item to it.
-        public void AddUserToList(string userName, int userColor)
+        public void AddUserToList(string userName, Color userColor)
         {
-            usersList.Add(userName, userColor);
+            usersList.Add(userName, userColor.ToString());
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
         }
         //Remove single user from users list and refresh the list.
@@ -118,7 +121,7 @@ namespace ChatClient {
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
         }
         //Refresh whole users list with list delivered in parameter or get new one from server.
-        public void RefreshUsersList(Dictionary<string, int> _usersList = null) {
+        public void RefreshUsersList(Dictionary<string, string> _usersList = null) {
             
             if (_usersList != null)
             {
@@ -250,7 +253,7 @@ namespace ChatClient {
             else {
                 //Access to users list userName
                 //MessageBox.Show(((KeyValuePair<string, int>) UsersListBox.SelectedItem).Key);
-                string selectedUser = ((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key;
+                string selectedUser = ((KeyValuePair<string, string>)UsersListBox.SelectedItem).Key;
                 string ipAddress = Server.ShowIpInfo(_LOGIN_, selectedUser);
                 string message = "Command Run -> Show IP of user: " + selectedUser + " -> IP : " + ipAddress;
                 AddMessageToFlowDocument(message);
@@ -273,11 +276,11 @@ namespace ChatClient {
             if (UsersListBox.SelectedItem == null) {
                 AddMessageToFlowDocument("Command Run -> Kick user: Failed! You have to select user from list.");
             }
-            else if(((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key == _LOGIN_) {
+            else if(((KeyValuePair<string, string>)UsersListBox.SelectedItem).Key == _LOGIN_) {
                 AddMessageToFlowDocument("Command Run -> Kick user: Failed! You can't kick yourself.");
             }
             else {
-                string selectedUser = ((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key;
+                string selectedUser = ((KeyValuePair<string, string>)UsersListBox.SelectedItem).Key;
                 string message = "Command Run -> Kick user: " + selectedUser + ". Request have been sent to server.";
                 AddMessageToFlowDocument(message);
                 //This is temporary solution. It should be changed to properly kick someone.
@@ -294,14 +297,40 @@ namespace ChatClient {
             if (UsersListBox.SelectedItem == null) {
                 AddMessageToFlowDocument("Command Run -> Ban User: Failed! You have to select user from list.");
             }
-            else if (((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key == _LOGIN_) {
+            else if (((KeyValuePair<string, string>)UsersListBox.SelectedItem).Key == _LOGIN_) {
                 AddMessageToFlowDocument("Command Run -> Ban user: Failed! You can't ban yourself.");
             }
             else {
-                string selectedUser = ((KeyValuePair<string, int>)UsersListBox.SelectedItem).Key;
+                string selectedUser = ((KeyValuePair<string, string>)UsersListBox.SelectedItem).Key;
                 AddMessageToFlowDocument("Command Run -> Ban user: " + selectedUser + ". Request have been sent to server.");
                 if(Server.BanUserFromService(_LOGIN_, selectedUser, _ROOM_NAME_)) {
                     RemoveUserFromList(selectedUser);
+                }
+            }
+        }
+
+        private void OnColorPick(object sender, SelectionChangedEventArgs e)
+        {
+            Color selectedColor = (Color)(ColorPickerComboBox.SelectedItem as PropertyInfo).GetValue(null, null);
+            AddMessageToFlowDocument(selectedColor.ToString());
+            Server.ChangeUserColor(_LOGIN_, selectedColor);
+        }
+
+        public void GetUserColor(string userName, Color userColor)
+        {
+            if (usersList.ContainsKey(userName))
+            {
+                AddMessageToFlowDocument("GetUserColor(string,Color): Znaleziono klucz w słowniku.");
+                usersList[userName] = userColor.ToString();
+                AddMessageToFlowDocument("GetUserColor(string,Color): Podmieniono kolor użytkownika: " + usersList[userName]);
+                Resources["UsersList"] = usersList.OrderBy(user => user.Key);
+                AddMessageToFlowDocument("GetUserColor(string,Color): Odświeżono resources.");
+                //foreach(ListBoxItem item in UsersListBox.Items)
+                foreach(var item in UsersListBox.Items)
+                {
+                    AddMessageToFlowDocument("GetUserColor(string,Color): Wejście w foreach: " + item.ToString());
+                    //((ListBoxItem)item).Foreground = new SolidColorBrush(userColor);
+                    //item.Foreground = new SolidColorBrush(userColor);
                 }
             }
         }

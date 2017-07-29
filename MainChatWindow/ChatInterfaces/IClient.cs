@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ServiceModel;
+using System.Windows.Media;
 
 namespace ChatInterfaces {
     public interface IClient {
@@ -12,10 +13,10 @@ namespace ChatInterfaces {
         void GetMessage(string message, string userName);
 
         [OperationContract]
-        void GetUsersList(Dictionary<string, int> usersList);
+        void GetUsersList(Dictionary<string, string> usersList);
 
         [OperationContract]
-        void GetNewUserToList(string userName, int userColor);
+        void GetNewUserToList(string userName, Color userColor);
 
         [OperationContract]
         void GetUserRemovedFromList(string userName);
@@ -25,5 +26,8 @@ namespace ChatInterfaces {
 
         [OperationContract]
         void YouHaveBeenBanned(string userName);
+
+        [OperationContract]
+        void GetUserColor(string userName, Color userColor);
     }
 }

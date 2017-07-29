@@ -7,6 +7,7 @@ using System.ServiceModel;
 using System.Collections.Concurrent;
 using System.Text;
 using System.ServiceModel.Channels;
+using System.Windows.Media;
 
 namespace ChatServer {
 
@@ -19,11 +20,11 @@ namespace ChatServer {
         private ConcurrentDictionary<string, BanSettings> BanList = new ConcurrentDictionary<string, BanSettings>();
 
         //This method returns dictionary of users with their personal name colors. Used by new conneted users since only they need whole list.
-        public Dictionary<string, int> GetUsersList() {
-            Dictionary<string, int> usersList = new Dictionary<string, int>();
+        public Dictionary<string, string> GetUsersList() {
+            Dictionary<string, string> usersList = new Dictionary<string, string>();
 
             foreach(var client in _connectedClients) {
-                usersList.Add(client.Value.UserName, client.Value.UserColor);
+                usersList.Add(client.Value.UserName, client.Value.UserColor.ToString());
             }
 
             return usersList;
@@ -60,7 +61,7 @@ namespace ChatServer {
             newClient.UserName = userName;
             newClient.UserPassword = userPassword;
             newClient.UserRoom = userRoomName;
-            newClient.UserColor = 0;
+            newClient.UserColor = Colors.Black;
 
             //debug data. This ip adres need verification since its saying localhost and I have no idea whether its servers adres,endpoints adress or simple client adress
             //newClient.debugConnectionInfo = OperationContext.Current.IncomingMessageProperties
@@ -85,7 +86,7 @@ namespace ChatServer {
             if(_connectedClients.TryRemove(userName, out clientToRemove)) {
                 Console.WriteLine("Logout(string,string): Server removed client from dictionary: " + userName);
             }
-            UpdateUsersListForAll(userName, 0, true);
+            UpdateUsersListForAll(userName, Colors.Black, true);
             Console.WriteLine("Logout(string,string): Sending request to clients to remove user from users list: " + userName);
             //clientToRemove.connection.
         }
@@ -99,7 +100,7 @@ namespace ChatServer {
             Console.WriteLine("Logout(string,string,string): Sending request to clients to remove user from users list: " + userName + " dontinformthisuseraboutlogout = " + dontInformThisUserAboutLogout);
         }
 
-        private void UpdateUsersListForAll(string userName, int userColor = 0, bool isLoggingOut = false, string dontSendRequestToThisUser = null)
+        private void UpdateUsersListForAll(string userName, Color userColor, bool isLoggingOut = false, string dontSendRequestToThisUser = null)
         {
             foreach(var client in _connectedClients)
             {
@@ -188,6 +189,29 @@ namespace ChatServer {
         private void AddToBanList(string bannedUserName, string roomName) {
             BanList.TryAdd(_connectedClients[bannedUserName].UserIPAddress, new BanSettings());
             Console.WriteLine("AddToBanList(string,string): Added new user to ban list: " + bannedUserName);
+        }
+
+        public void ChangeUserColor(string userName, Color userColor)
+        {
+            if (_connectedClients.ContainsKey(userName))
+            {
+                _connectedClients[userName].UserColor = userColor;
+                Console.WriteLine("ChangeUserColor(string,Color): Changed user ( " + userName + " ) color to: " + userColor.ToString());
+                InformUsersAboutColorChange(userName, userColor);
+                Console.WriteLine("ChangeUserColor(string,Color): Started method to inform everyone about color change");
+            }
+        }
+
+        private void InformUsersAboutColorChange(string userName, Color userColor)
+        {
+            foreach(var client in _connectedClients)
+            {
+                if(client.Key.ToLower() != userName.ToLower())
+                {
+                    client.Value.connection.GetUserColor(userName, userColor);
+                    Console.WriteLine("InformUsersAboutColorChange(string,Color): Sending request to change users color on list to: " + client.Value.UserName);
+                }
+            }
         }
     }
 }

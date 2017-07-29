@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using System.Windows.Media;
 
 namespace ChatInterfaces {
 
@@ -21,7 +22,7 @@ namespace ChatInterfaces {
         void SendMessageToAll(string message, string userName);
 
         [OperationContract]
-        Dictionary<string, int> GetUsersList();
+        Dictionary<string, string> GetUsersList();
 
         [OperationContract]
         string ShowIpInfo(string userName, string selectedUserName);
@@ -31,5 +32,8 @@ namespace ChatInterfaces {
 
         [OperationContract]
         bool BanUserFromService(string userName, string selectedUserName, string userRoomName);
+
+        [OperationContract]
+        void ChangeUserColor(string userName, Color userColor);
     }
 }
