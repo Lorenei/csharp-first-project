@@ -29,7 +29,7 @@ namespace ChatServer {
                 FirstRunUserDB.TryAdd(line.Split(' ').First(), line.Split(' ').Last());
             }
 
-            _server = new ChatService(FirstRunUserDB);
+            _server = new ChatService(FirstRunUserDB, userDBPath);
 
             using(ServiceHost host = new ServiceHost(_server)) {
                 host.Open();

@@ -15,6 +15,7 @@ using System.ServiceModel;
 using ChatInterfaces;
 using System.ComponentModel;
 using System.Reflection;
+using System.Windows.Threading;
 
 namespace ChatClient {
     /// <summary>
@@ -44,7 +45,7 @@ namespace ChatClient {
 
         private bool AmIBeingKicked = false;
 
-        public MainWindow(string userName, string userPassword, string userRoomName) {
+        public MainWindow(string userName, string userPassword, string userRoomName, bool RegisterAsNewUser = false) {
             InitializeComponent(); //If it's possible it could be moved as last command so we won't need to use close if initialization fails?
             //Closing += new CancelEventHandler(LogoutFromServer);
 
@@ -53,7 +54,7 @@ namespace ChatClient {
             usersList = new Dictionary<string, string>();
             InitializeVariables(userName, userPassword, userRoomName);
             InitializeClientCallback();
-            if(!InitializeServerConnection())
+            if(!InitializeServerConnection(RegisterAsNewUser))
             {
                 MessageBox.Show("Failed to login. Application shutdown.");
                 Application.Current.Shutdown();
@@ -68,6 +69,8 @@ namespace ChatClient {
             }*/
             RefreshUsersList();
             InitializeLogFile();
+            StatusTextBlock_1.Text = "Welcome " + userName + " to chat room! Have a nice day! ";
+            StatusBarClock();
         }
         ~MainWindow() {
             if (!AmIBeingKicked && _IS_CONNECTION_DONE_) {
@@ -135,10 +138,19 @@ namespace ChatClient {
         public void InitializeClientCallback() {
             _clientCallback = new ClientCallback();
         }
-        public bool InitializeServerConnection() {
+        public bool InitializeServerConnection(bool RegisterAsNewUser) {
             _channelFactory = new DuplexChannelFactory<IChatService>(new ClientCallback(), "ChatServiceEndPoint");
             Server = _channelFactory.CreateChannel();
             
+            if(RegisterAsNewUser)
+            {
+                if(!Server.RegisterNewUserToDB(_LOGIN_, _PASSWORD_)) {
+                    MessageBox.Show("Registration failed!");
+                    return false;
+                }
+                MessageBox.Show("Registration completed succesfully.");
+            }
+
             if(Server.Login(_LOGIN_, _PASSWORD_, _ROOM_NAME_) != 0) {
                 return false;
             }
@@ -352,6 +364,24 @@ namespace ChatClient {
             AddMessageToFlowDocument("UpdateColorForUser(string,color): Podmieniono kolor użytkownika: " + userName + " na: " + userColor.ToString());
             Resources["UsersList"] = usersList.OrderBy(user => user.Key);
             AddMessageToFlowDocument("UpdateColorForUser(string,color): Odświeżono resources.");
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Arkadiusz Richert\narshenik@gmail.com\ngithub.com/Lorenei\n2017 - current.");
+        }
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            LogoutFromServer(new object(), new CancelEventArgs());
+            CloseConnectionWithServer();
+            Application.Current.Shutdown();
+        }
+        private void StatusBarClock()
+        {
+            DispatcherTimer timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate
+            {
+                StatusTextBlock_3.Text = DateTime.Now.ToString("HH:mm:s");
+            }, this.Dispatcher);
         }
     }
 }

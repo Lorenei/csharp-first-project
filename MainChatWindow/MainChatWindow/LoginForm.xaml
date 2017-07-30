@@ -15,6 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -31,6 +32,9 @@
         <TextBox Name="ServerTextBox" Grid.Column="1" Grid.Row="3" Text="localhost:9000" />
 
         <Button Name="SignInButton" Content="Sign In" Grid.Column="1" Grid.Row="4" IsDefault="True" Click="SignInButton_Click"/>
+
+        <CheckBox Name="RegisterUserCheckBox" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Label Content="Register new user" Grid.Column="1" Grid.Row="5" />
 
     </Grid>
 </Window>

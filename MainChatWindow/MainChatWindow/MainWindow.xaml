@@ -59,11 +59,11 @@
         <Menu Margin="5" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3">
             <MenuItem Header="_File">
                 <MenuItem Header="New" />
-                <MenuItem Header="Exit" />
+                <MenuItem Header="Exit" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="Help" />
-                <MenuItem Header="About" />
+                <MenuItem Header="About" Click="About_Click"/>
             </MenuItem>
         </Menu>
         <!-- FlowDocumentScrollViewer acts as chat area that shows all of the messages received
@@ -257,15 +257,15 @@
         <!--
             Standard statusbar that has some additional info.
         -->
-        <StatusBar Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3">
+        <StatusBar Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right">
             <StatusBarItem>
-                <TextBlock Text="statustext1" />
+                <TextBlock Name="StatusTextBlock_1" />
             </StatusBarItem>
             <StatusBarItem>
-                <TextBlock Text="status text2" />
+                <TextBlock Name="StatusTextBlock_2" />
             </StatusBarItem>
             <StatusBarItem>
-                <TextBlock Text="status text3" />
+                <TextBlock Name="StatusTextBlock_3" />
             </StatusBarItem>
         </StatusBar>
     </Grid>

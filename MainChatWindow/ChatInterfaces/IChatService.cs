@@ -35,5 +35,8 @@ namespace ChatInterfaces {
 
         [OperationContract]
         void ChangeUserColor(string userName, Color userColor);
+
+        [OperationContract]
+        bool RegisterNewUserToDB(string userName, string userPassword);
     }
 }

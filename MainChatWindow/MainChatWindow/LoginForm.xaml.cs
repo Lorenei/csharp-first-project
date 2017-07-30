@@ -30,13 +30,34 @@ namespace ChatClient {
             //Disable all input boxes so user can't change anything while program is trying to establish connection with server.
             DisableInputBoxes();
 
-            mainWindow = new MainWindow(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text);
+            if(!ValidateInput())
+            {
+                MessageBox.Show("You must enter your username and password to proceed.");
+                EnableInputBoxes();
+                return;
+            }
+            if(RegisterUserCheckBox.IsChecked == true)
+            {
+                //Will have to add server connection to loginform so we can register, and try to login here instead of already in chat window.
+                /*if(!RegisterNewUser())
+                {
+                    MessageBox.Show("Failed to register new user. Please try different user name.");
+                    EnableInputBoxes();
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Registration completed. You will be loged in now.");
+                }*/
+            }
+
+            mainWindow = new MainWindow(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text, RegisterUserCheckBox.IsChecked.Value);
             //mainWindow.InitializeVariables(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text);
             //if (!mainWindow._IS_CONNECTION_DONE_)
             //{
-                //MessageBox.Show("Failed to login!");
-                //EnableInputBoxes();
-                //return;
+            //MessageBox.Show("Failed to login!");
+            //EnableInputBoxes();
+            //return;
             //}
 
             //mainWindow.InitializeLogFile();
@@ -48,7 +69,7 @@ namespace ChatClient {
             {
                 this.Owner = mainWindow;
             }
-            catch(Exception err)
+            catch (Exception err)
             {
                 Application.Current.Shutdown();
             }
@@ -64,8 +85,22 @@ namespace ChatClient {
             PasswordTextBox.IsEnabled = false;
             RoomTextBox.IsEnabled = false;
         }
+        private bool ValidateInput()
+        {
+            if(PasswordTextBox.Password == "" || PasswordTextBox.Password == null || LoginTextBox.Text == "" || LoginTextBox.Text == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
-        //Event on key down added to textbox where user can type message to be sent to chat room
-
+        private bool RegisterNewUser()
+        {
+            
+            return false;
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using System.ServiceModel.Channels;
 using System.Windows.Media;
+using System.IO;
 
 namespace ChatServer {
 
@@ -21,9 +22,12 @@ namespace ChatServer {
 
         private ConcurrentDictionary<string, string> _usersDatabaseDictionary = new ConcurrentDictionary<string, string>();
 
-        public ChatService(ConcurrentDictionary<string,string> usersDatabaseDictionary)
+        private string _userDBFilePath;
+
+        public ChatService(ConcurrentDictionary<string,string> usersDatabaseDictionary, string userDBFilePath)
         {
             _usersDatabaseDictionary = usersDatabaseDictionary;
+            _userDBFilePath = userDBFilePath;
         }
 
         //This method returns dictionary of users with their personal name colors. Used by new conneted users since only they need whole list.
@@ -283,6 +287,24 @@ namespace ChatServer {
                     }
                 }
             }
+        }
+
+        public bool RegisterNewUserToDB(string userName, string userPassword)
+        {
+            if(_usersDatabaseDictionary.ContainsKey(userName))
+            {
+                return false;
+            }
+            try
+            {
+                File.AppendAllText(_userDBFilePath, Environment.NewLine + userName + " " + userPassword);
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+            _usersDatabaseDictionary.TryAdd(userName, userPassword);
+            return true;
         }
     }
 }
