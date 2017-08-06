@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows;
 
-namespace MainChatWindow
+namespace ChatClient
 {
     class ChatLogAPI {
 
