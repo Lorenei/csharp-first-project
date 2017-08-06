@@ -15,27 +15,32 @@ namespace ChatServer {
 
         static void Main(string[] args) {
             string userDBPath = "userDB.txt";
+            bool wasFileCreated = false;
 
             //Checks if database file exists already. Creates it if not.
             if(!File.Exists(userDBPath))
             {
                 File.Create(userDBPath);
                 Console.WriteLine("Created users database file.");
+                wasFileCreated = true;
             }
-
-            try
+            FirstRunUserDB = new ConcurrentDictionary<string, string>();
+            if (!wasFileCreated)
             {
-                List<string> tempUsersArray = File.ReadAllLines(userDBPath).ToList<string>();
-                FirstRunUserDB = new ConcurrentDictionary<string, string>();
-                foreach (string line in tempUsersArray)
+                try
                 {
-                    FirstRunUserDB.TryAdd(line.Split(' ').First(), line.Split(' ').Last());
+                    List<string> tempUsersArray = File.ReadAllLines(userDBPath).ToList<string>();
+                    foreach (string line in tempUsersArray)
+                    {
+                        FirstRunUserDB.TryAdd(line.Split(' ').First(), line.Split(' ').Last());
+                    }
+                }
+                catch (Exception err)
+                {
+                    Console.WriteLine("Error while reading database file and adding users to dictionary. Application exit.");
                 }
             }
-            catch(Exception err)
-            {
-                Console.WriteLine("Error while reading database file and adding users to dictionary. Application exit.");
-            }
+
             _server = new ChatService(FirstRunUserDB, userDBPath);
 
             using(ServiceHost host = new ServiceHost(_server)) {
