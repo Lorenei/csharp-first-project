@@ -1,4 +1,10 @@
-﻿#############################################
+﻿##  15.05.2017 UPDATE ##
+## Removed empty tempplated server project - will start a new one ##
+## C# Academy regulations for project received so will clean up a bit, add new line for code, and few files ##
+## Added for_csharp_academy branch which will be used to submit project. After deadline won't be updated anymore. ##
+## Added development-main branch which will be used to commit changes made. Merge with main will occur once code is stable and tested ##
+
+#############################################
 SERVER APPLICATION
 ------------------
 TODO SERVER VERSION 0.1.0
