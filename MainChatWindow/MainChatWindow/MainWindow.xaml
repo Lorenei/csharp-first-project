@@ -6,11 +6,8 @@
         xmlns:local="clr-namespace:ChatClient"
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="600">
+    
     <Window.Resources>
-        <!-- 
-            Definitions of style that will be used for added messages
-            This is temporary
-        -->
         <Style TargetType="FlowDocument">
             <Setter Property="FontSize" Value="13" />
         </Style>
@@ -35,12 +32,9 @@
         <Style x:Key="_BOLD_">
             <Setter Property="Control.FontWeight" Value="Bold" />
         </Style>
-        <!--<Style x:Key="_UNDERLINE_">
-            <Setter Property="TextBlock.TextDecorations" Value="Underline" />
-        </Style>-->
     </Window.Resources>
+    
     <Grid>
-        <!-- Definitions of rows and columns in main gridpanel -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -54,8 +48,6 @@
             <ColumnDefinition Width="120" MinWidth="120" MaxWidth="300" />
         </Grid.ColumnDefinitions>
 
-        <!-- Menubars that are shown on top of the app File/Edit etc
-            Need to link commands to them -->
         <Menu Margin="5" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3">
             <MenuItem Header="_File">
                 <MenuItem Header="New" />
@@ -66,56 +58,14 @@
                 <MenuItem Header="About" Click="About_Click"/>
             </MenuItem>
         </Menu>
-        <!-- FlowDocumentScrollViewer acts as chat area that shows all of the messages received
-            together with emotes/emojis and other images and rich text format with scrollbar
-            Need to add automatic scroll to latest message added/received
-            Need to add template for messages to use depending of formating choosen-->
+        
         <FlowDocumentScrollViewer Name="OknoChatowe" Margin="5" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" UseLayoutRounding="False" HorizontalScrollBarVisibility="Disabled" IsInactiveSelectionHighlightEnabled="True">
             <FlowDocument IsHyphenationEnabled="True" IsOptimalParagraphEnabled="True">
-                <Paragraph FontFamily="Segoe UI Emoji" FontSize="13">
-                    <Span Foreground="Gray">[15:15:15]</Span>
-                    <Bold>Lorenei:</Bold>
-                    <Italic>No coś tam 😖 napiszemy żeby było widać że to chat no nie?
-                    </Italic>
-                    <Image Source="emots/1f609.png" Width="16"></Image>
-                </Paragraph>
-                <Paragraph FontStyle="Italic">
-                    Lorem ipsum dolor😖
-                    <Image Source="emots/1f616.png" Width="20"/> sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </Paragraph>
-                <Paragraph FontSize="10">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </Paragraph>
-                <Paragraph FontWeight="Bold">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </Paragraph>
             </FlowDocument>
         </FlowDocumentScrollViewer>
-        <!--
-            Old Temporary textbox, left just in case I will need context menu.
-            <TextBox Margin="5" Text="tutaj glowny chat" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2">
-            <TextBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Cut" />
-                    <MenuItem Header="Copy" />
-                    <MenuItem Header="Paste" />
-                    <Separator />
-                    <MenuItem Header="Select All" />
-                </ContextMenu>
-            </TextBox.ContextMenu>
-        </TextBox>
-        -->
 
-        <!-- GridSplitter allows to resize columns with FlowDocument and users list
-            To make it possible to read longer names than can be shown in standard size list
-        -->
         <GridSplitter Width="5" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Background="Black" />
 
-        <!--
-            ListBox acts as a list of users that are currently connected to the chat room.
-            Allows images near names and colors. Has context menu with options similar to
-            the buttons below.
-        -->
         <ListBox Name="UsersListBox"  Margin="5" Grid.Column="2" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{DynamicResource UsersList}" Grid.IsSharedSizeScope="True">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -127,41 +77,8 @@
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            <!--<ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Kick" />
-                    <MenuItem Header="Ban" />
-                    <MenuItem Header="IP" />
-                    <MenuItem Header="Priv" />
-                </ContextMenu>
-            </ListBox.ContextMenu>
-            <ListBoxItem>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontWeight="Bold" Foreground="Aquamarine">
-                    user1
-                    </TextBlock>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Foreground="Red">
-                        user2
-                    </TextBlock>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem>
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="emots/1f3da.png" Width="15" />
-                    <TextBlock Foreground="Coral">
-                        user3_o_zajebiscie_dlugim_nicku
-                    </TextBlock>
-                </StackPanel>
-            </ListBoxItem>-->
         </ListBox>
-        <!-- 
-            Buttons with chat functions ie BAN or color change. Need to have selected user
-            in the list above.
-        -->
+
         <WrapPanel Margin="5" HorizontalAlignment="Center" Grid.Column="2" Grid.Row="2">
             <Button Name="BanUserButton" Padding="5" Click="BanUserButton_Click">BAN</Button>
             <Button Name="KickUserButton" Padding="5" Click="KickUserButton_Click">KICK</Button>
@@ -176,44 +93,6 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <!--<ComboBox Name="ColorSetterComboBox" Width="90">
-                <ComboBoxItem  IsSelected="True">
-                    <TextBlock Text="no color" Background="White" Width="80" />
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="Aqua" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="Blue"  Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="BlueViolet" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="Brown" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="BurlyWood" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="CadetBlue" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="Chartreuse" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="Chocolate" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="Coral" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="CornflowerBlue" Width="80"/>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <TextBlock Background="Crimson" Width="80"/>
-                </ComboBoxItem>
-            </ComboBox>-->
 
         </WrapPanel>
         <Grid Margin="5" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3">
@@ -225,22 +104,14 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!--
-                Expander allows for hiding buttons that have to do with fonts/emotes menu
-                if they're not needed.
-            -->
             <Expander Margin="0,0,5,0" ExpandDirection="Right" Grid.Column="0">
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal">
                     <ToggleButton Name="FontColorButton" Width="20">A</ToggleButton>
                     <ToggleButton Name="BoldButton" Width="20" Style="{StaticResource _BOLD_}">B</ToggleButton>
                     <ToggleButton Name="ItalicButton" Width="20" Style="{StaticResource _ITALIC_}">I</ToggleButton>
-                    <!--<ToggleButton Name="UnderlineButton" Width="20" Style="{StaticResource _UNDERLINE_}">U</ToggleButton>-->
                 </StackPanel>
             </Expander>
 
-            <!-- 
-                Textbox that allows writing message and sending it to the chat server.
-            -->
             <TextBox Name="UserMessageTextBox" KeyDown="UserMessageTextBox_OnKeyDownHandler"  Text="Tutaj piszemy tekxt" Grid.Column="1">
                 <TextBox.ContextMenu>
                     <ContextMenu>
@@ -254,9 +125,6 @@
             </TextBox>
         </Grid>
 
-        <!--
-            Standard statusbar that has some additional info.
-        -->
         <StatusBar Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right">
             <StatusBarItem>
                 <TextBlock Name="StatusTextBlock_1" />
