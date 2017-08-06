@@ -297,7 +297,7 @@ namespace ChatServer {
             }
             try
             {
-                File.AppendAllText(_userDBFilePath, Environment.NewLine + userName + " " + userPassword);
+                File.AppendAllText(_userDBFilePath, userName + " " + userPassword + Environment.NewLine);
             }
             catch(Exception e)
             {
