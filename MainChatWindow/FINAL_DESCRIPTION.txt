@@ -1,2 +1,61 @@
 #FINAL DESCRIPTION#
-#Will contain final description of project made for C# Academy. Features, used technologies etc. #
+#Contain final description of project made for C# Academy. Features, used technologies etc. #
+# AUTHOR: ARKADIUSZ RICHERT #
+# E-MAIL: ARSHENIK@GMAIL.COM #
+
+DESCRIPTION:
+Basic chat client desktop application. Inspired by polchat.pl which was shut down years ago.
+Features described below and my opinion after making them:
+
+- Login Panel -
+	Kinda works as predicted. Kinda because I forgot to create it at start, and have been working
+	on main chat window all the time, where I created server connections etc. So since I didn't
+	have time to fix it, login panel now sends login credentials as parameters to main chat
+	window constructor. After that it closes itself and sets chat window as owner of application.
+
+- Writing and sending messages to public chat room -
+	Works as intended. 
+	Does not have functionality I wished to have. I wanted to send message
+	directly to server, so server would decide on timestamp of receival and send it back to ALL
+	clients. But when running server method, client waits for respond. Since it waits on open channel
+	I can't make server contact client that send the message, to get timestamp or his own message
+	without creating new threaded channel so it won't timeout. Since I have no knowledge about threads
+	yet, this "wanna have it that way" functionality is pushed to later time (after c-sharp-academy-project).
+
+- Logging chat talk to file - 
+	Works as intended.
+
+- List of users connected to current room -
+	Works as intended.
+	Server and client holds dictionary of connected users. Adds new joined users, remove leaving users.
+	Client sets it's dictionary as a Dynamic Resource of ordered KeyValuePair so whenever resources are set,
+	they are instantly visible and alphabeticaly ordered on ListBox item.
+	Except of the users name, it also holds users color which will be visible whenever changed to
+	anything other than black.
+
+- Control buttons for room admins (kick, show ip info, ban) -
+	Functionality of mentioned buttons implemented and work as intended. But admin permissions table isn't implemented at all.
+	Every user has ability to kick, ban or see other users IP. IP address is stored in servers dictionary of connected clients.
+	It's extracted from connection informations at user login.
+
+- Menubar and status bar with some basic things - 
+	Works as intended.
+	Exit menu bar, About menu bar, clock in status bar and welcome message in status bar.
+	My plans for future are: add New which would open new chat room tab, some customizable settings for colors or font settings
+	that would apply for chat window and html log file. And some other things I have no idea of yet!
+
+
+	Client GUI is made in WPF, Server is a Console application that doesn't take any command input, but shows some basic output about
+operation calls. Service is made in WCF, with Server and Client interfaces exluded to third project and implemented for client and server.
+This allows to skip making proxy classes/interfaces that would have to show to the world which methods are available for service.
+This easy way works only thanks to that I am the one who owns both server and client code. Wouldn't work for applications that do not 
+have ownership of service - I heard that amazon opens up service with some APIs so people can write up clients to connect to these services.
+
+	I have underestimated WCF and met with many problems on the way that I can't solve yet by myself or even with internet help.
+There were many times I wanted, tried, and failed with connections client-server-client since there were so many things I wanted
+to send from client to server, and at the same time server would contact EVERY user about something. But it just simply doesn't work
+like that. I had to make some workarounds etc. Major workaround I implemented is.. try catch every attempt to connect and user service
+or clients method, if any error occurs I just hide it or shut down application. Fix needs some manual timeout,error handling and
+mostly- I need better understanding of WCF. I intend to work more on that project, learn more, and perfect it more. But that will be
+at other branch now, since c-sharp-academy-project is done for now :) Thanks!
+
