@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace ChatServer {
+    /// <summary>
+    /// Class stored informations about connected user to service.
+    /// </summary>
     public class ConnectedClient {
-        public IClient connection;
+        public IClient connection; //Holds callback channel to make it possible to call this client methods.
         public string UserName { get; set; }
         public string UserPassword { get; set; }
         public string UserRoom { get; set; } //Holds name of room where user is logged in

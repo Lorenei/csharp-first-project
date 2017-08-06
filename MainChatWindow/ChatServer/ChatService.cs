@@ -18,8 +18,10 @@ namespace ChatServer {
         //This dictionary holds all of our currently connected users, together with some of their personal settings.
         public ConcurrentDictionary<string, ConnectedClient> _connectedClients = new ConcurrentDictionary<string, ConnectedClient>();
 
+        //This dictionary holds all currently banned users.
         private ConcurrentDictionary<string, BanSettings> BanList = new ConcurrentDictionary<string, BanSettings>();
 
+        //This dictionary holds all users currently registered from database.
         private ConcurrentDictionary<string, string> _usersDatabaseDictionary = new ConcurrentDictionary<string, string>();
 
         private string _userDBFilePath;
@@ -53,7 +55,7 @@ namespace ChatServer {
             newClient.connection = establishedUserConnection;
             newClient.UserIPAddress = endpoint.Address;
 
-            Console.WriteLine("new user trying to log in with login: " + userName + " and password: " + userPassword);
+            Console.WriteLine("New user trying to log in with login: " + userName + " and password: " + userPassword);
 
             //Commented out things that make ban for IP address. It makes impossible to localtest it.
             //Bans for username instead.
@@ -73,12 +75,14 @@ namespace ChatServer {
                 }
             }
 
+            //Check if server already has someone logged in with new users name.
             foreach (var client in _connectedClients) {
                 if(client.Key.ToLower() == userName.ToLower()) {
                     return 1;
                 }
             }
 
+            //Check if provided login and password are in database and are correct.
             if(_usersDatabaseDictionary.ContainsKey(userName))
             {
                 if(_usersDatabaseDictionary[userName] != userPassword)
@@ -91,15 +95,13 @@ namespace ChatServer {
                 return 1;
             }
 
+            //Create new user.
             newClient.UserName = userName;
             newClient.UserPassword = userPassword;
             newClient.UserRoom = userRoomName;
             newClient.UserColor = Colors.Black;
 
-            //debug data. This ip adres need verification since its saying localhost and I have no idea whether its servers adres,endpoints adress or simple client adress
-            //newClient.debugConnectionInfo = OperationContext.Current.IncomingMessageProperties
-            //^^^ temporary need to review this at later date, but it works
-
+            //Add new user to dictionary
             if (_connectedClients.TryAdd(userName, newClient)) {
                 Console.WriteLine("New user added to dictionary");
             }
@@ -108,7 +110,7 @@ namespace ChatServer {
             Console.WriteLine("New user connected to server: " + userName);
             Console.WriteLine("New users IP IS: " + newClient.UserIPAddress);
 
-            //UpdateUsersListForAll(userName);
+            //Send information about new user connected to everyone.
             UpdateUsersListForAll(newClient.UserName, newClient.UserColor);
 
             return 0;
@@ -117,11 +119,12 @@ namespace ChatServer {
         {
             ConnectedClient clientToRemove = new ConnectedClient();
             if(_connectedClients.TryRemove(userName, out clientToRemove)) {
-                Console.WriteLine("Logout(string,string): Server removed client from dictionary: " + userName);
+                //Console.WriteLine("Logout(string,string): Server removed client from dictionary: " + userName);
+                Console.WriteLine("Server removed client from dictionary: " + userName);
             }
             UpdateUsersListForAll(userName, Colors.Black, true);
-            Console.WriteLine("Logout(string,string): Sending request to clients to remove user from users list: " + userName);
-            //clientToRemove.connection.
+            //Console.WriteLine("Logout(string,string): Sending request to clients to remove user from users list: " + userName);
+            Console.WriteLine("Sending request to clients to remove user from users list: " + userName);
         }
         private void Logout(string userName, string userRoomName, string dontInformThisUserAboutLogout) {
             ConnectedClient clientToRemove = new ConnectedClient();
@@ -141,8 +144,6 @@ namespace ChatServer {
                 {
                     if (dontSendRequestToThisUser == null || dontSendRequestToThisUser == "" || (dontSendRequestToThisUser != null && dontSendRequestToThisUser != "" && dontSendRequestToThisUser.ToLower() != client.Key.ToLower()))
                     {
-                        //continue;
-                        //}
                         if (!isLoggingOut)
                         {
                             Console.WriteLine("Sending new user to join users list to : " + client.Key);
@@ -166,7 +167,6 @@ namespace ChatServer {
                             {
                                 Console.WriteLine("Failed to send user logged out to: " + client.Key + ". Error e: " + e.ToString());
                             }
-                            //Console.WriteLine("dontsendrequesttothisuser = " + dontSendRequestToThisUser);
                         }
                     }
                     else
