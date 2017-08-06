@@ -395,7 +395,6 @@ namespace ChatClient {
         {
             if (usersList.ContainsKey(userName))
             {
-                AddMessageToFlowDocument("GetUserColor(string,Color): Znaleziono klucz w słowniku.");
                 UpdateColorForUser(userName, userColor);
             }
         }
