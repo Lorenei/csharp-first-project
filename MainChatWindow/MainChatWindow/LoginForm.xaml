@@ -22,7 +22,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Content="Login: " Grid.Column="0" Grid.Row="0"/>
-        <TextBox Name="LoginTextBox" Grid.Column="1" Grid.Row="0" Text="Lorenei"/>
+        <TextBox Name="LoginTextBox" Grid.Column="1" Grid.Row="0"/>
         <Label Content="Password: " Grid.Column="0" Grid.Row="1"/>
         <PasswordBox Name="PasswordTextBox" Grid.Column="1" Grid.Row="1"/>
         <Label Content="Room: " Grid.Column="0" Grid.Row="2" />

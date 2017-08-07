@@ -112,7 +112,7 @@
                 </StackPanel>
             </Expander>
 
-            <TextBox Name="UserMessageTextBox" KeyDown="UserMessageTextBox_OnKeyDownHandler"  Text="Tutaj piszemy tekxt" Grid.Column="1">
+            <TextBox Name="UserMessageTextBox" KeyDown="UserMessageTextBox_OnKeyDownHandler" Grid.Column="1">
                 <TextBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Cut" />
