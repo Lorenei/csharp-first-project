@@ -52,7 +52,9 @@ namespace ChatServer {
                         FirstRunUserDB.TryAdd(line.Split(' ').First(), line.Split(' ').Last());
                     }
                 }
+#pragma warning disable CS0168 // Variable is declared but never used
                 catch (Exception err)
+#pragma warning restore CS0168 // Variable is declared but never used
                 {
                     Console.WriteLine("Error while reading database file and adding users to dictionary. Application exit.");
                 }

@@ -28,7 +28,7 @@ namespace ChatClient
     public partial class MainWindow : Window
     {
 
-=       /// <summary>
+        /// <summary>
         /// The server variable that will be used to communicate with server.
         /// </summary>
         public static IChatService Server;
@@ -441,7 +441,9 @@ namespace ChatClient
                     string message = "Command Run -> Show IP of user: " + selectedUser + " -> IP : " + ipAddress;
                     AddMessageToFlowDocument(message);
                 }
+#pragma warning disable CS0168 // Variable is declared but never used
                 catch (Exception err)
+#pragma warning restore CS0168 // Variable is declared but never used
                 {
                     AddMessageToFlowDocument("Command Run -> Show IP of user: failed!");
                 }

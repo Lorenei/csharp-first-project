@@ -407,7 +407,9 @@ namespace ChatServer {
             {
                 File.AppendAllText(_userDBFilePath, userName + " " + userPassword + Environment.NewLine);
             }
+#pragma warning disable CS0168 // Variable is declared but never used
             catch(Exception e)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
                 return false;
             }
