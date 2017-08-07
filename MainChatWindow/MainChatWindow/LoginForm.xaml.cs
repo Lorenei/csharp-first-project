@@ -14,33 +14,48 @@ using System.Windows.Shapes;
 
 namespace ChatClient {
 
+    /// <summary>
+    /// Logic for login form window.
+    /// </summary>
+    /// <seealso cref="System.Windows.Window" />
+    /// <seealso cref="System.Windows.Markup.IComponentConnector" />
     public partial class LoginForm : Window {
 
         MainWindow mainWindow;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginForm"/> class.
+        /// </summary>
         public LoginForm() {
             InitializeComponent();
         }
 
-        private void SignInButton_Click(object sender, RoutedEventArgs e) {
+        /// <summary>
+        /// Handles the Click event of the SignInButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
+        private void SignInButton_Click(object sender, RoutedEventArgs e)
+        {
             //Disable all input boxes so user can't change anything while program is trying to establish connection with server.
             DisableInputBoxes();
 
             //Safety check.
-            if(!ValidateInput())
+            if (!ValidateInput())
             {
                 MessageBox.Show("You must enter your username and password to proceed.");
                 EnableInputBoxes();
                 return;
             }
 
+            //Creates new instance of MainWindow to start server connection process - giving all needed data into constructor.
             mainWindow = new MainWindow(LoginTextBox.Text, PasswordTextBox.Password, RoomTextBox.Text, RegisterUserCheckBox.IsChecked.Value);
 
             this.Hide(); //Hide login form.
             mainWindow.Show(); //Show main chat window.
             try
             {
-                this.Owner = mainWindow;
+                this.Owner = mainWindow; //Try to make mainWindow owner of application.
             }
             catch (Exception err)
             {
@@ -51,7 +66,8 @@ namespace ChatClient {
         /// <summary>
         /// Enabled all input boxes.
         /// </summary>
-        private void EnableInputBoxes() {
+        private void EnableInputBoxes()
+        {
             LoginTextBox.IsEnabled = true;
             PasswordTextBox.IsEnabled = true;
             RoomTextBox.IsEnabled = true;

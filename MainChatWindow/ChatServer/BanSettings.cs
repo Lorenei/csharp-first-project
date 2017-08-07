@@ -10,9 +10,19 @@ namespace ChatServer {
     /// </summary>
     class BanSettings {
 
-        private int ForHowLong; //Time for ban in minutes
-        private DateTime StartOfBan; //When ban was received.
+        /// <summary>
+        /// Time for ban in minutes
+        /// </summary>
+        private int ForHowLong;
+        /// <summary>
+        /// The start of ban
+        /// </summary>
+        private DateTime StartOfBan;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BanSettings"/> class.
+        /// </summary>
+        /// <param name="_ForHowLong">For how long. Default 30 minutes.</param>
         public BanSettings(int _ForHowLong = 30) {
             ForHowLong = _ForHowLong;
             StartOfBan = DateTime.Now;
@@ -21,6 +31,9 @@ namespace ChatServer {
         /// <summary>
         /// Method returns true if ban should be still active, false if ban should be removed.
         /// </summary>
+        /// <returns>
+        /// True if ban is still valid, false if it should be removed.
+        /// </returns>
         public bool CheckIfStillValid() {
 
             if((DateTime.Now - StartOfBan).TotalMinutes > ForHowLong) {

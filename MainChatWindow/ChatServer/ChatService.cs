@@ -12,27 +12,50 @@ using System.IO;
 
 namespace ChatServer {
 
+    /// <summary>
+    /// Main class of Chat Service that holds all logic of server.
+    /// </summary>
+    /// <seealso cref="ChatInterfaces.IChatService" />
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
     public class ChatService : IChatService {
 
-        //This dictionary holds all of our currently connected users, together with some of their personal settings.
+        /// <summary>
+        /// This dictionary holds all of our currently connected users, together with some of their personal settings.
+        /// </summary>
         public ConcurrentDictionary<string, ConnectedClient> _connectedClients = new ConcurrentDictionary<string, ConnectedClient>();
 
-        //This dictionary holds all currently banned users.
+        /// <summary>
+        /// This dictionary holds all currently banned users.
+        /// </summary>
         private ConcurrentDictionary<string, BanSettings> BanList = new ConcurrentDictionary<string, BanSettings>();
 
-        //This dictionary holds all users currently registered from database.
+        /// <summary>
+        /// This dictionary holds all users currently registered from database.
+        /// </summary>
         private ConcurrentDictionary<string, string> _usersDatabaseDictionary = new ConcurrentDictionary<string, string>();
 
+        /// <summary>
+        /// The user database file path
+        /// </summary>
         private string _userDBFilePath;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChatService"/> class.
+        /// </summary>
+        /// <param name="usersDatabaseDictionary">The users database dictionary.</param>
+        /// <param name="userDBFilePath">The user database file path.</param>
         public ChatService(ConcurrentDictionary<string,string> usersDatabaseDictionary, string userDBFilePath)
         {
             _usersDatabaseDictionary = usersDatabaseDictionary;
             _userDBFilePath = userDBFilePath;
         }
 
-        //This method returns dictionary of users with their personal name colors. Used by new conneted users since only they need whole list.
+        /// <summary>
+        /// This method returns dictionary of users with their personal name colors. Used by new conneted users since only they need whole list.
+        /// </summary>
+        /// <returns>
+        /// Users list as dictionary item.
+        /// </returns>
         public Dictionary<string, string> GetUsersList() {
             Dictionary<string, string> usersList = new Dictionary<string, string>();
 
@@ -43,6 +66,15 @@ namespace ChatServer {
             return usersList;
         }
 
+        /// <summary>
+        /// Method used by clients to login into service.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="userPassword">The user password.</param>
+        /// <param name="userRoomName">Name of the user room.</param>
+        /// <returns>
+        /// 0 for succesful login, other for failed attempt.
+        /// </returns>
         public int Login(string userName, string userPassword, string userRoomName) {
 
             OperationContext context = OperationContext.Current;
@@ -115,6 +147,11 @@ namespace ChatServer {
 
             return 0;
         }
+        /// <summary>
+        /// Method used by clients to logout from service. Server will remove user from it's dictionary.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="userRoomName">Name of the user room.</param>
         public void Logout(string userName, string userRoomName)
         {
             ConnectedClient clientToRemove = new ConnectedClient();
@@ -126,6 +163,12 @@ namespace ChatServer {
             //Console.WriteLine("Logout(string,string): Sending request to clients to remove user from users list: " + userName);
             Console.WriteLine("Sending request to clients to remove user from users list: " + userName);
         }
+        /// <summary>
+        /// Logouts the specified user name.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="userRoomName">Name of the user room.</param>
+        /// <param name="dontInformThisUserAboutLogout">The dont inform this user about logout.</param>
         private void Logout(string userName, string userRoomName, string dontInformThisUserAboutLogout) {
             ConnectedClient clientToRemove = new ConnectedClient();
             if (_connectedClients.TryRemove(userName, out clientToRemove)) {
@@ -136,6 +179,13 @@ namespace ChatServer {
             Console.WriteLine("Logout(string,string,string): Sending request to clients to remove user from users list: " + userName + " dontinformthisuseraboutlogout = " + dontInformThisUserAboutLogout);
         }
 
+        /// <summary>
+        /// Updates the users list for all.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="userColor">Color of the user.</param>
+        /// <param name="isLoggingOut">if set to <c>true</c> [is logging out].</param>
+        /// <param name="dontSendRequestToThisUser">The dont send request to this user.</param>
         private void UpdateUsersListForAll(string userName, Color userColor, bool isLoggingOut = false, string dontSendRequestToThisUser = null)
         {
             foreach(var client in _connectedClients)
@@ -176,6 +226,10 @@ namespace ChatServer {
                 }
             }
         }
+        /// <summary>
+        /// Updates the users list for all.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
         private void UpdateUsersListForAll(string userName)
         {
             foreach(var client in _connectedClients)
@@ -195,6 +249,11 @@ namespace ChatServer {
             }
         }
 
+        /// <summary>
+        /// Method used to inform all users except for the one doing the sending, about new message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="userName">Name of the user.</param>
         public void SendMessageToAll(string message, string userName) {
             Console.WriteLine("Message received from: " + userName + " that contains: " + message);
             foreach(var client in _connectedClients) {
@@ -219,12 +278,29 @@ namespace ChatServer {
             }
         }
 
+        /// <summary>
+        /// Method returns ip address of selected client from users list.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="selectedUserName">Name of the selected user.</param>
+        /// <returns>
+        /// IP address as string.
+        /// </returns>
         public string ShowIpInfo(string userName, string selectedUserName)
         {
             //if userThatWantsToSee has admin privileges return ip if not return error
             return _connectedClients[selectedUserName].UserIPAddress;
         }
 
+        /// <summary>
+        /// Method used to kick selected user from users list from service.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="selectedUserName">Name of the selected user.</param>
+        /// <param name="userRoomName">Name of the user room.</param>
+        /// <returns>
+        /// True if kicked, false if not.
+        /// </returns>
         public bool KickUserFromService(string userName, string selectedUserName, string userRoomName) {
             //if user has admin rights allow him to kick user
             Console.WriteLine("Request to kick user named: " + selectedUserName + " received from: " + userName);
@@ -238,6 +314,15 @@ namespace ChatServer {
             return true;
         }
 
+        /// <summary>
+        /// Method used to ban selected user from users list from service.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="selectedUserName">Name of the selected user.</param>
+        /// <param name="userRoomName">Name of the user room.</param>
+        /// <returns>
+        /// True if banned, false if not.
+        /// </returns>
         public bool BanUserFromService(string userName, string selectedUserName, string userRoomName) {
 
             Console.WriteLine("Request to ban user named: " + selectedUserName + " received from: " + userName);
@@ -253,12 +338,22 @@ namespace ChatServer {
             return true;
         }
 
+        /// <summary>
+        /// Adds to ban list.
+        /// </summary>
+        /// <param name="bannedUserName">Name of the banned user.</param>
+        /// <param name="roomName">Name of the room.</param>
         private void AddToBanList(string bannedUserName, string roomName) {
             //BanList.TryAdd(_connectedClients[bannedUserName].UserIPAddress, new BanSettings());
             BanList.TryAdd(_connectedClients[bannedUserName].UserName, new BanSettings());
             Console.WriteLine("AddToBanList(string,string): Added new user to ban list: " + bannedUserName);
         }
 
+        /// <summary>
+        /// Method used to change visible color on users list.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="userColor">Color of the user.</param>
         public void ChangeUserColor(string userName, Color userColor)
         {
             if (_connectedClients.ContainsKey(userName))
@@ -270,6 +365,11 @@ namespace ChatServer {
             }
         }
 
+        /// <summary>
+        /// Informs the users about color change.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="userColor">Color of the user.</param>
         private void InformUsersAboutColorChange(string userName, Color userColor)
         {
             foreach(var client in _connectedClients)
@@ -289,6 +389,14 @@ namespace ChatServer {
             }
         }
 
+        /// <summary>
+        /// Method used to register new user to service database file.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="userPassword">The user password.</param>
+        /// <returns>
+        /// True if registered, false if not.
+        /// </returns>
         public bool RegisterNewUserToDB(string userName, string userPassword)
         {
             if(_usersDatabaseDictionary.ContainsKey(userName))

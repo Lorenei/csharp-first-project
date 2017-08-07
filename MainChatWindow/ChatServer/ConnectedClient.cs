@@ -12,11 +12,41 @@ namespace ChatServer {
     /// Class stored informations about connected user to service.
     /// </summary>
     public class ConnectedClient {
-        public IClient connection; //Holds callback channel to make it possible to call this client methods.
+        /// <summary>
+        /// Holds callback channel to make it possible to call this client methods.
+        /// </summary>
+        public IClient connection;
+        /// <summary>
+        /// Gets or sets the name of the user.
+        /// </summary>
+        /// <value>
+        /// The name of the user.
+        /// </value>
         public string UserName { get; set; }
+        /// <summary>
+        /// Gets or sets the user password.
+        /// </summary>
+        /// <value>
+        /// The user password.
+        /// </value>
         public string UserPassword { get; set; }
-        public string UserRoom { get; set; } //Holds name of room where user is logged in
-        public Color UserColor { get; set; } //Holds color of users name that will be visible in logged in users list.
-        public string UserIPAddress; //Holds users IP address
+        /// <summary>
+        /// Holds name of room where user is logged in
+        /// </summary>
+        /// <value>
+        /// The user room.
+        /// </value>
+        public string UserRoom { get; set; }
+        /// <summary>
+        /// Holds color of users name that will be visible in logged in users list.
+        /// </summary>
+        /// <value>
+        /// The color of the user.
+        /// </value>
+        public Color UserColor { get; set; }
+        /// <summary>
+        /// The user ip address
+        /// </summary>
+        public string UserIPAddress { get; set; }
     }
 }
