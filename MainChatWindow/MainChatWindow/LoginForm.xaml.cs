@@ -57,7 +57,9 @@ namespace ChatClient {
             {
                 this.Owner = mainWindow; //Try to make mainWindow owner of application.
             }
+#pragma warning disable CS0168 // Variable is declared but never used
             catch (Exception err)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
                 Application.Current.Shutdown();
             }
