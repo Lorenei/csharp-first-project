@@ -1,8 +1,8 @@
+# YOUTUBE LINK: https://youtu.be/YoyQxnUC72c #
 #FINAL DESCRIPTION#
 #Contain final description of project made for C# Academy. Features, used technologies etc. #
 # AUTHOR: ARKADIUSZ RICHERT #
 # E-MAIL: ARSHENIK@GMAIL.COM #
-# YOUTUBE LINK: https://youtu.be/YoyQxnUC72c #
 
 DESCRIPTION:
 Basic chat client desktop application. Inspired by polchat.pl which was shut down years ago.
